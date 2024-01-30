@@ -1,5 +1,8 @@
 .vscode
 
+/apirest
+/sample
+
 # Logs
 logs
 *.log
