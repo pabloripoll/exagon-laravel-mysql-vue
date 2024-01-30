@@ -1,18 +1,60 @@
-# Hexagonal System Application
+# Hexagonal ERP / eCommerce Example
+*(This repository is in development)*
 
-### Requirements
-Define directory names and enviroment variables before start editing .env file in this root directory.
+## About
 
-Some commands will help to set them all.
+The aim of this repository is to present a development example model of an `HEXAGONAL SYSTEM` with two professional applications with its basic characteristics to be used/visited either by visitors/customers to buy the company products, or by company's administrative employees.
 
-This will output the basic settings required
-```bash
-$ make system-check
+This is an hexagonal system example where a company has the following applications decoupling de `DRIVING SIDE` from the `DRIVEN SIDE`
+```
+.
+├── ERP
+│   ├── Frontend Application
+│   └── Backend API service
+└── eCommerce
+    ├── Frontend Application
+    └── Backend API service
 ```
 
-Check local enviroment for ports available
+It is designed to be deploy on Linux servers as micro services explained in the following tree
+```
+.
+├── databases
+│   ├── MariaDB
+│   │   └── Detached service to gain performance in real scenario with Linux Debian 6.1 and MariaDB 11.2
+│   │
+│   └── MongoDB
+│       └── Detached service to gain performance in real scenario
+│
+├── webapp
+│   └── Frontend application for company customers in Linux Alpine 3.19, Node 21.3 & Vue 3 with Pinia
+│
+├── webapp-service
+│   └── Backend API service
+│
+├── webadm
+│   └── Frontend application for company employees in Linux Alpine 3.19, Node 21.3 & Vue 3 with Pinia
+│
+├── webadm-service
+│   └── Backend API service in Alpine 3.19, Nginx and Laravel 10 with PHP 8.2
+│
+├── broker
+│   └── Broker service with Linux Alpine and RabbitMQ
+│
+```
+
+### Requirement
+
+This project can be deployed on local or remote machine if it has the stack intalled or it has **Docker** and/or **Docker Compose** installed, the isolation enviroment configuration to run each application.
+
+The directories name and enviroment variables values are already defined as default but it can be edited and must be update `./.env` file.
+
+### Automatation
+A Makefile has been developed to automate some repeatedly commands at the moment of restart any application or to watch system performance.
+
+The following helper command will output the basic settings required to build the whole system
 ```bash
-$ sudo lsof -i -P -n | grep LISTEN
+$ make system-check
 ```
 
 ### Restart
@@ -29,12 +71,7 @@ Source: https://github.com/nodejs/docker-node/tree/main
 
 - Web Application Service = Alpine, NodeJS, ExpressJS, MongoDB \
 
-
-## Requirements???
-- Docker and Docker Compose
-- Node & NPM installed locally
-
-## Troubleshoots
+## Troubleshoots & Helpers
 
 ## Which Alpine
 ```bash
@@ -54,6 +91,11 @@ $ sudo rm /var/lib/docker/network/files/local-kv.db
 $ sudo docker system prune
 $ sudo service docker start
 $ sudo kill $(sudo lsof -t -i:${PORT})
+```
+
+If any of the ports required is busy check local enviroment for ports available
+```bash
+$ sudo lsof -i -P -n | grep LISTEN
 ```
 
 Kill used port
