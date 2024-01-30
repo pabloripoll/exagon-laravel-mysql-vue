@@ -1,0 +1,26 @@
+version: "3.6"
+
+services:
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: erp-rabbitmq
+        environment:
+            - RABBITMQ_ERLANG_COOKIE=3pBRVIu08orKbB7ddlEFeSZ2sQ4kpX8d
+            - RABBITMQ_NODENAME=rabbit@rabbitmq
+            - RABBITMQ_DEFAULT_USER=guest
+            - RABBITMQ_DEFAULT_PASS=guest
+        ports:
+            - 15672:15672
+            - 5672:5672
+        volumes:
+            - rabbitmq-erp:/var/lib/rabbitmq:cached
+
+    mail:
+        image: dockage/mailcatcher:0.6.5
+        container_name: erp-mailcatcher
+        ports:
+            - 1080:1080
+            - 1025:1025
+
+volumes:
+    rabbitmq-erp: {}

@@ -1,0 +1,79 @@
+version: "3.6"
+
+services:
+    db:
+        image: mariadb:10.1
+        container_name: erp-db
+        environment:
+            - MYSQL_DATABASE=erp
+            - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+        ports:
+            - 3306:3306
+        volumes:
+            - .:/var/www
+            - db-data:/var/lib/mysql
+
+    php:
+        image: elektro3/erp-php
+        build:
+            context: ./docker/php
+            args:
+                USER_ID: ${USER_ID:-1000}
+                GROUP_ID: ${GROUP_ID:-1000}
+        container_name: erp-php
+        depends_on:
+            - db
+        volumes:
+            - .:/var/www:cached
+
+    nginx:
+        image: elektro3/erp-nginx
+        build:
+            context: ./docker/nginx
+        container_name: erp-nginx
+        depends_on:
+            - php
+        volumes:
+            - .:/var/www:cached
+        ports:
+            - 8080:80
+
+    mail:
+        image: dockage/mailcatcher:0.6.5
+        container_name: erp-mailcatcher
+        ports:
+            - 1080:1080
+            - 1025:1025
+
+    rabbitmq:
+        image: rabbitmq:3-management
+        container_name: erp-rabbitmq
+        environment:
+            - RABBITMQ_ERLANG_COOKIE=3pBRVIu08orKbB7ddlEFeSZ2sQ4kpX8d
+            - RABBITMQ_NODENAME=rabbit@rabbitmq
+            - RABBITMQ_DEFAULT_USER=guest
+            - RABBITMQ_DEFAULT_PASS=guest
+        ports:
+            - 15672:15672
+            - 5672:5672
+        volumes:
+            - rabbitmq-erp:/var/lib/rabbitmq:cached
+
+    phpmyadmin:
+        image: elektro3/erp-phpmyadmin
+        build:
+            context: ./docker/phpmyadmin
+        container_name: erp-phpmyadmin
+        environment:
+            - PMA_HOST=db
+            - PMA_USER=root
+            - PMA_PASSWORD=
+            - PMA_MAXNAVIGATIONITEMS=1000
+        ports:
+            - 8081:80
+        depends_on:
+            - db
+
+volumes:
+    db-data: {}
+    rabbitmq-erp: {}

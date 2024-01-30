@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+
+  node:
+    image: node-21.6:alpine-3.19
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: "${PROJECT}"
+    environment:
+      - PUID=1000
+      - PGID=1000
+    entrypoint: /bin/sh
+    ports:
+      - ${PROJECT_PORT}:8000
+    working_dir: /srv/app
+    volumes:
+      - type: bind
+        source: ./
+        target: /srv/app
+    tty: true
