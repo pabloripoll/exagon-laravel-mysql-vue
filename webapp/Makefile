@@ -18,7 +18,7 @@ PROJECT_DIR=src
 CURRENT_USER=sudo
 DOCKER_COMPOSE?=$(CURRENT_USER) docker compose
 DOCKER_COMPOSE_RUN=$(DOCKER_COMPOSE) run --rm
-DOCKER_EXEC_TOOLS_APP=$(CURRENT_USER) docker exec -it $(DOCKER_NAME) sh
+DOCKER_EXEC_TOOLS_APP=$(CURRENT_USER) docker exec -it $(PROJECT)$(WEBAPP_PROJECT) sh
 NODE_INSTALL="npm i"
 SERVER_RUN="npm run dev"
 
@@ -75,14 +75,12 @@ start:
 first:
 	build install dev
 
-stop:
-	$(ROOT_DIR)/docker/docker-compose.yml
-	$(DOCKER_COMPOSE) kill || true
-	$(DOCKER_COMPOSE) rm --force || true
+stop: ## ${PROJECT}${WEBAPP_PROJECT}
+	cd docker && $(DOCKER_COMPOSE) kill || true
+	cd docker && $(DOCKER_COMPOSE) rm --force || true
 
 restart:
 	stop start dev
 
-clear:
-	stop $(ROOT_DIR)/docker-compose.yml
-	$(DOCKER_COMPOSE) down -v --remove-orphans || true
+clear: ## stop $(ROOT_DIR)/docker-compose.yml
+	cd docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true
