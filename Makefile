@@ -20,18 +20,6 @@ help: ## Show this help message
 	echo 'targets:'
 	egrep '^(.+)\:\ ##\ (.+)' ${MAKEFILE_LIST} | column -t -c 2 -s ':#'
 
-# Repository user
-name := ""
-email := ""
-repo-user:  ## set local git repository user $ make repo-user name=pablo email=pabloripoll.it@gmail.com
-	if [ $${name:-''} = "" -o $${email:-''} = "" ]; then \
-		echo ${C_RED}"Repository user name must be specified!"${C_END}; \
-    else \
-		git config user.name "${name}"; \
-		git config user.email "${email}"; \
-		echo ${C_GRN}"O.K.! repository's user has been set."${C_END}; \
-	fi
-
 # -------------------------------------------------------------------------------------------------
 #  System
 # -------------------------------------------------------------------------------------------------

@@ -25,8 +25,9 @@ RUN npm install -g yarn --force
 RUN npm -v
 RUN yarn -v
 
-#COPY docker-entrypoint.sh /usr/local/bin/
-#ENTRYPOINT ["docker-entrypoint.sh"]
+COPY docker-entrypoint.sh /usr/local/bin/
+
+ENTRYPOINT ["docker-entrypoint.sh"]
 
 CMD ["node"]
 #CMD ["node", "path/to/project/script.js"]

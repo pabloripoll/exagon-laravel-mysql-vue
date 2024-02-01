@@ -58,16 +58,16 @@ ssh:
 .PHONY: build install dev up start first stop restart clear
 
 build:
-	$(DOCKER_COMPOSE) up --build --no-recreate -d
+	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
 
 install:
-	$(DOCKER_EXEC_TOOLS_APP) -c $(NODE_INSTALL)
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(NODE_INSTALL)
 
 dev:
-	$(DOCKER_EXEC_TOOLS_APP) -c $(SERVER_RUN)
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(SERVER_RUN)
 
 up:
-	$(DOCKER_COMPOSE) up -d
+	cd docker && $(DOCKER_COMPOSE) up -d
 
 start:
 	up dev
@@ -76,7 +76,7 @@ first:
 	build install dev
 
 stop:
-	$(ROOT_DIR)/docker-compose.yml
+	$(ROOT_DIR)/docker/docker-compose.yml
 	$(DOCKER_COMPOSE) kill || true
 	$(DOCKER_COMPOSE) rm --force || true
 
