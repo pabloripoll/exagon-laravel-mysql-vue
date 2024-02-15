@@ -1,7 +1,6 @@
 <script setup>
 import Header from './views/common/Header.vue'
 import Footer from './views/common/Footer.vue'
-import Home from './views/Home.vue'
 </script>
 
 <template>
