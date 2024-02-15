@@ -18,7 +18,9 @@ PROJECT_DIR=src
 CURRENT_USER=sudo
 DOCKER_COMPOSE?=$(CURRENT_USER) docker compose
 DOCKER_COMPOSE_RUN=$(DOCKER_COMPOSE) run --rm
-DOCKER_EXEC_TOOLS_APP=$(CURRENT_USER) docker exec -it $(DOCKER_NAME)$(WEBADM_PROJECT) sh
+DOCKER_EXEC_TOOLS_APP=$(CURRENT_USER) docker exec -it $(PROJECT)$(WEBADM_PROJECT) sh
+NODE_INSTALL="npm i"
+SERVER_RUN="npm run dev"
 
 #
 # Helpers
@@ -32,14 +34,14 @@ docker-enviroment:
 	if [ -f ./docker/.env ]; then \
 		echo ${C_BLU}"WEBADM DOCKER ENV"${C_END}" file "${C_GRN}"is set."${C_END}; \
     else \
-		echo ${C_BLU}"WEBADM DOCKER ENV"${C_END}${C_YEL}" is not set."${C_END}" \
-	Create one placed in ./ by "${C_YEL}"$$ make webadm-service-docker-env"${C_END}" \
+		echo ${C_BLU}"WEBADM DOCKER ENV"${C_END}${C_YEL}" is not set."${C_END}"\
+	Create one placed in ./ by "${C_YEL}"$$ make webapp-docker-env"${C_END}" \
 	or in ./$(DIR_BASENAME)/ by "${C_YEL}"$$ make docker-enviroment-set"${C_END}; \
 	fi
 
 docker-enviroment-set:
-	echo "PROJECT=$(PROJECT)-webadm-service\
-	\nPROJECT_PORT=$(WEBADM_PORT)"> ./docker/.env;
+	echo "PROJECT=${PROJECT}${WEBADM_PROJECT}\
+	\nPROJECT_PORT=${WEBADM_PORT}" > ./docker/.env;
 	echo ${C_BLU}"WEBADM DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END};
 
 #
@@ -48,7 +50,7 @@ docker-enviroment-set:
 .PHONY: ssh
 
 ssh:
-	cd ./docker && $(DOCKER_EXEC_TOOLS_APP)
+	$(DOCKER_EXEC_TOOLS_APP)
 
 #
 # Commands
@@ -56,10 +58,16 @@ ssh:
 .PHONY: build install dev up start first stop restart clear
 
 build:
-	cd ./docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
+	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
+
+install:
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(NODE_INSTALL)
+
+dev:
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(SERVER_RUN)
 
 up:
-	cd ./docker && $(DOCKER_COMPOSE) up -d
+	cd docker && $(DOCKER_COMPOSE) up -d
 
 start:
 	up dev
@@ -67,11 +75,12 @@ start:
 first:
 	build install dev
 
-stop:
-	cd ./docker && $(DOCKER_COMPOSE) kill || true && $(DOCKER_COMPOSE) rm --force || true
+stop: ## ${PROJECT}${WEBADM_PROJECT}
+	cd docker && $(DOCKER_COMPOSE) kill || true
+	cd docker && $(DOCKER_COMPOSE) rm --force || true
 
 restart:
 	stop start dev
 
-clear:
-	cd ./docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true
+clear: ## stop $(ROOT_DIR)/docker-compose.yml
+	cd docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true

@@ -2,15 +2,17 @@ version: "3.8"
 
 services:
   node:
-    image: php82:alpine-3.19
+    image: node-21.6:alpine-3.19
     build:
       context: ./
       dockerfile: Dockerfile
     container_name: ${PROJECT}
+    entrypoint: /bin/sh
     ports:
-      - ${PROJECT_PORT}:80
+      - ${PROJECT_PORT}:8000
+    working_dir: /srv/app
     volumes:
       - type: bind
-        source: ../
-        target: /var/www/html
+        source: ../.
+        target: /srv/app
     tty: true

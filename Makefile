@@ -70,6 +70,7 @@ system-check:
 	fi
 	cd ./$(MARIADB_DB_DIR) && $(MAKE) docker-enviroment;
 	echo ""
+
 # -------------------------------------------------------------------------------------------------
 #  Docker
 # -------------------------------------------------------------------------------------------------
@@ -86,28 +87,22 @@ containers:
 # -------------------------------------------------------------------------------------------------
 .PHONY: webapp webapp-set
 
-webapp:
-	cd ./$(WEBAPP_DIR) && $(MAKE) up dev;
-
-webapp-set:
+webapp-env:
 	cd ./$(WEBAPP_DIR) && $(MAKE) docker-enviroment-set;
 
-webapp-service:
-	cd ./$(WEBAPP_SERVICE_DIR) && $(MAKE) up dev;
-
-webapp-service-set:
-	cd ./$(WEBAPP_SERVICE_DIR) && $(MAKE) docker-enviroment-set;
+webapp-build:
+	cd ./$(WEBAPP_DIR) && $(MAKE) up dev;
 
 # -------------------------------------------------------------------------------------------------
 #  Web ADMIN
 # -------------------------------------------------------------------------------------------------
 .PHONY: webadm-service webadm-service-set
 
-webadm:
-	cd ./$(WEBADM_DIR) && $(MAKE) up dev;
-
-webadm-set:
+webadm-env:
 	cd ./$(WEBADM_DIR) && $(MAKE) docker-enviroment-set;
+
+webadm-build:
+	cd ./$(WEBADM_DIR) && $(MAKE) up dev;
 
 webadm-service:
 	cd ./$(WEBADM_SERVICE_DIR) && $(MAKE) up;
@@ -120,7 +115,7 @@ webadm-service-set:
 # -------------------------------------------------------------------------------------------------
 .PHONY: mariadb-service mariadb-service-set
 
-mariadb-service:
+mariadb-build:
 	cd ./$(MARIADB_DIR) && $(MAKE) up;
 
 mariadb-service-set:
