@@ -1,15 +1,9 @@
 <script setup>
-import HomeSlider from './components/Home/HomeSlider.vue'
-import HomePromotions from './components/Home/HomePromotions.vue'
-import HomeTrending from './components/Home/HomeTrending.vue'
-import HomeMobiles from './components/Home/HomeMobiles.vue'
+import HomeStart from './components/Home/HomeStart.vue'
 </script>
 
 <template>
-    <HomeSlider />
-    <HomePromotions />
-    <HomeTrending />
-    <HomeMobiles />
+    <HomeStart />
 </template>
 
 <style scoped></style>

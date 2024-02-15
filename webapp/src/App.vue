@@ -6,7 +6,7 @@ import Home from './views/Home.vue'
 
 <template>
     <Header />
-    <main>
+    <main class="container mb-5">
         <RouterView></RouterView>
     </main>
     <Footer />
@@ -36,9 +36,8 @@ export default {
         let themejs_app    = document.createElement('script')
         let themejs_custom = document.createElement('script')
 
-        themejs_vendor.setAttribute('src', 'theme/color/assets/js/vendor.min.js')
-        themejs_app.setAttribute('src', 'theme/color/assets/js/app.min.js')
-        themejs_app.setAttribute('src', 'theme/color/custom/fix.js')
+        themejs_vendor.setAttribute('src', '../src/assets/theme/bootstrap/assets/js/bootstrap.bundle.min.js')
+        themejs_app.setAttribute('src', '../src/assets/theme/bootstrap/custom/color-modes.js')
 
         document.head.appendChild(themejs_vendor)
         document.head.appendChild(themejs_app)
