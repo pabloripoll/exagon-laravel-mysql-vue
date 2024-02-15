@@ -1,25 +1,89 @@
-ARG NODE_VERSION=21.6.0
-ARG ALPINE_VERSION=3.19.0
+ARG ARCH=
+FROM ${ARCH}alpine:3.19
 
-FROM node:${NODE_VERSION}-alpine AS node
+# Install packages
+RUN apk --no-cache add \
+        php82 \
+        php82-fpm \
+        php82-opcache \
+        php82-pecl-apcu \
+        php82-mysqli \
+        php82-pgsql \
+        php82-json \
+        php82-openssl \
+        php82-curl \
+        php82-zlib \
+        php82-soap \
+        php82-xml \
+        php82-fileinfo \
+        php82-phar \
+        php82-intl \
+        php82-dom \
+        php82-xmlreader \
+        php82-ctype \
+        php82-session \
+        php82-iconv \
+        php82-tokenizer \
+        php82-zip \
+        php82-simplexml \
+        php82-mbstring \
+        php82-gd \
+        nginx \
+        runit \
+        curl \
+# Bring in gettext so we can get `envsubst`, then throw
+# the rest away. To do this, we need to install `gettext`
+# then move `envsubst` out of the way so `gettext` can
+# be deleted completely, then move `envsubst` back.
+    && apk add --no-cache --virtual .gettext gettext \
+    && mv /usr/bin/envsubst /tmp/ \
+    && runDeps="$( \
+        scanelf --needed --nobanner /tmp/envsubst \
+            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+            | sort -u \
+            | xargs -r apk info --installed \
+            | sort -u \
+    )" \
+    && apk add --no-cache $runDeps \
+    && apk del .gettext \
+    && mv /tmp/envsubst /usr/local/bin/ \
+    # Remove alpine cache
+    && rm -rf /var/cache/apk/* \
+    # Remove default server definition
+    && rm /etc/nginx/http.d/default.conf \
+    # Make sure files/folders needed by the processes are accessable when they run under the nobody user
+    && chown -R nobody.nobody /run \
+    && chown -R nobody.nobody /var/lib/nginx \
+    && chown -R nobody.nobody /var/log/nginx
 
-FROM alpine:${ALPINE_VERSION}
+# Add configuration files
+COPY --chown=nobody rootfs/ /
 
-COPY --from=node /usr/lib /usr/lib
-COPY --from=node /usr/local/lib /usr/local/lib
-COPY --from=node /usr/local/include /usr/local/include
-COPY --from=node /usr/local/bin /usr/local/bin
+# Switch to use a non-root user from here on
+USER nobody
 
-RUN node -v
+# Add application
+#WORKDIR /var/www/html
 
-RUN npm install -g yarn --force
+# Expose the port nginx is reachable on
+EXPOSE 80 443
 
-RUN yarn -v
+# Let run it start nginx & php-fpm
+CMD [ "/bin/docker-entrypoint.sh" ]
 
-#RUN apk add bash git helm openssh yq github-cli
+# Configure a healthcheck to validate that everything is up&running
+#HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping
 
-#COPY docker-entrypoint.sh /usr/local/bin/
-#ENTRYPOINT ["docker-entrypoint.sh"]
-
-CMD ["node"]
-#CMD ["node", "path/to/project/script.js"]
+ENV client_max_body_size=2M \
+    clear_env=no \
+    allow_url_fopen=On \
+    allow_url_include=Off \
+    display_errors=Off \
+    file_uploads=On \
+    max_execution_time=0 \
+    max_input_time=-1 \
+    max_input_vars=1000 \
+    memory_limit=128M \
+    post_max_size=8M \
+    upload_max_filesize=2M \
+    zlib_output_compression=On

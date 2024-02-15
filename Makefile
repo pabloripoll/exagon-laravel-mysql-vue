@@ -126,12 +126,15 @@ mariadb-service:
 mariadb-service-set:
 	cd ./$(MARIADB_DIR) && $(MAKE) docker-enviroment-set;
 
-#
-# REPOSITORY
-#
+# -------------------------------------------------------------------------------------------------
+#  Repository
+# -------------------------------------------------------------------------------------------------
+.PHONY: repo-test repo-user repo-flush repo-preset repo-push repo-pull
 
 repo-test: ## compares remote git repository connection with current set in .git/config
+	echo ${C_BLU}Repository config connection:${C_END};
 	git remote -v
+	echo ${C_YEL}Repository connection check:${C_END};
 	git ls-remote $(REPO_CONN)
 
 name := ""
@@ -154,7 +157,7 @@ repo-flush: ## clears local git repository cache
 branch ?= "$(shell git branch | sed 's/^.\{2\}//')"
 comment ?= maint: $(shell date +"%Y.%m.%d %H:%M:%S")
 
-repo-preset:
+repo-preset: # push and pull helper
 	@echo "Repository preset "${C_YEL}"PUSH TO REPOSITORY"${C_END}" process:"
 	@echo "$$ git stash \n\$$ git pull origin -u "${C_GRN}$(branch)${C_END}" \n\$$ git stash pop \n\
 	$$ git add .  \n\$$ git commit -m \"$(comment)\"  \n\$$ git push origin -u "${C_GRN}$(branch)${C_END}
