@@ -1,11 +1,13 @@
 <script setup>
 import Header from './views/common/Header.vue'
+import Sidebar from './views/common/Sidebar.vue'
 import Footer from './views/common/Footer.vue'
 </script>
 
 <template>
     <Header />
-    <main class="container mb-5">
+    <Sidebar />
+    <main class="content-wrapper">
         <RouterView></RouterView>
     </main>
     <Footer />
@@ -14,6 +16,13 @@ import Footer from './views/common/Footer.vue'
 <style scoped></style>
 
 <script>
+/* import '../src/assets/theme/adminlte/plugins/jquery/jquery.min.js';
+import '../src/assets/theme/adminlte/plugins/jquery-ui/jquery-ui.min.js'
+//$.widget.bridge('uibutton', $.ui.button)
+import '../src/assets/theme/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js'
+import '../src/assets/theme/adminlte/plugins/pace-progress/pace.min.js' */
+
+
 export default {
     data: () => {
         return {
@@ -29,18 +38,23 @@ export default {
         window.addEventListener('hashchange', () => {
 		    this.currentPath = window.location.hash
 		})
-
+        console.log('app')
         // theme scripts
-        let themejs_vendor = document.createElement('script')
-        let themejs_app    = document.createElement('script')
-        let themejs_custom = document.createElement('script')
+        let themejs_jquery = document.createElement('script')
+        let themejs_jqueryui = document.createElement('script')
+        let themejs_bootstrap = document.createElement('script')
+        let themejs_pace = document.createElement('script')
 
-        themejs_vendor.setAttribute('src', '../src/assets/theme/bootstrap/assets/js/bootstrap.bundle.min.js')
-        themejs_app.setAttribute('src', '../src/assets/theme/bootstrap/custom/color-modes.js')
+        themejs_jquery.setAttribute('src', '../src/assets/theme/adminlte/plugins/jquery/jquery.min.js')
+        themejs_jqueryui.setAttribute('src', '../src/assets/theme/adminlte/plugins/jquery-ui/jquery-ui.min.js')
+        themejs_bootstrap.setAttribute('src', '../src/assets/theme/adminlte/plugins/bootstrap/js/bootstrap.bundle.min.js')
+        themejs_pace.setAttribute('src', '../src/assets/theme/adminlte/plugins/pace-progress/pace.min.js')
 
-        document.head.appendChild(themejs_vendor)
-        document.head.appendChild(themejs_app)
-        document.head.appendChild(themejs_custom)
+        document.body.appendChild(themejs_jquery)
+        document.body.appendChild(themejs_jqueryui)
+        document.body.appendChild(themejs_bootstrap)
+        document.body.appendChild(themejs_pace)
+
     },
     methods: {
         //

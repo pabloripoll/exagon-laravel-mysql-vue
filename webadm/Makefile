@@ -55,13 +55,13 @@ ssh:
 #
 # Commands
 #
-.PHONY: build install dev up start first stop restart clear
-
-build:
-	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
+.PHONY: install build dev up start first stop restart clear
 
 install:
 	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(NODE_INSTALL)
+
+build:
+	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
 
 dev:
 	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(SERVER_RUN)
