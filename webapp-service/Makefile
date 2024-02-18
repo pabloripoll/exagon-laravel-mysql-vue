@@ -18,7 +18,7 @@ PROJECT_DIR=src
 CURRENT_USER=sudo
 DOCKER_COMPOSE?=$(CURRENT_USER) docker compose
 DOCKER_COMPOSE_RUN=$(DOCKER_COMPOSE) run --rm
-DOCKER_EXEC_TOOLS_APP=$(CURRENT_USER) docker exec -it $(PROJECT)$(WEBADM_PROJECT) sh
+DOCKER_EXEC_TOOLS_APP=$(CURRENT_USER) docker exec -it $(PROJECT)$(WEBAPP_SERVICE_PROJECT) sh
 NODE_INSTALL="npm i"
 SERVER_RUN="npm run dev"
 
@@ -32,17 +32,17 @@ fix-permission:
 
 docker-enviroment:
 	if [ -f ./docker/.env ]; then \
-		echo ${C_BLU}"WEBADM DOCKER ENV"${C_END}" file "${C_GRN}"is set."${C_END}; \
+		echo ${C_BLU}"WEBAPP DOCKER ENV"${C_END}" file "${C_GRN}"is set."${C_END}; \
     else \
-		echo ${C_BLU}"WEBADM DOCKER ENV"${C_END}${C_YEL}" is not set."${C_END}"\
+		echo ${C_BLU}"WEBAPP DOCKER ENV"${C_END}${C_YEL}" is not set."${C_END}"\
 	Create one placed in ./ by "${C_YEL}"$$ make webapp-docker-env"${C_END}" \
 	or in ./$(DIR_BASENAME)/ by "${C_YEL}"$$ make docker-enviroment-set"${C_END}; \
 	fi
 
 docker-enviroment-set:
-	echo "PROJECT=${PROJECT}${WEBADM_PROJECT}\
-	\nPROJECT_PORT=${WEBADM_PORT}" > ./docker/.env;
-	echo ${C_BLU}"WEBADM DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END};
+	echo "PROJECT=${PROJECT}${WEBAPP_PROJECT}\
+	\nPROJECT_PORT=${WEBAPP_PORT}" > ./docker/.env;
+	echo ${C_BLU}"WEBAPP DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END};
 
 #
 # Enter container
@@ -55,7 +55,7 @@ ssh:
 #
 # Commands
 #
-.PHONY: install build dev up start first stop restart clear
+.PHONY: build install dev up start first stop restart clear
 
 build:
 	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
@@ -75,7 +75,7 @@ start:
 first:
 	build install dev
 
-stop: ## ${PROJECT}${WEBADM_PROJECT}
+stop: ## ${PROJECT}${WEBAPP_PROJECT}
 	cd docker && $(DOCKER_COMPOSE) kill || true
 	cd docker && $(DOCKER_COMPOSE) rm --force || true
 

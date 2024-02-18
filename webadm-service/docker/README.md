@@ -1,66 +1,68 @@
-## nginx-php-fpm - [![build](https://github.com/richarvey/nginx-php-fpm/actions/workflows/build_images.yml/badge.svg)](https://github.com/richarvey/nginx-php-fpm/actions/workflows/build_images.yml) ![docker hub](https://img.shields.io/docker/pulls/richarvey/nginx-php-fpm.svg) ![docker hub](https://img.shields.io/docker/stars/richarvey/nginx-php-fpm.svg) ![Github](https://img.shields.io/github/stars/richarvey/nginx-php-fpm.svg) ![docker version](https://img.shields.io/docker/v/richarvey/nginx-php-fpm?sort=semver)
+# Docker PHP-FPM 8.3 & Nginx 1.24 on Alpine Linux
+https://github.com/TrafeX/docker-php-nginx
 
-## Overview
-This is a Dockerfile/image to build a container for nginx and php-fpm, with the ability to pull website code from git when the container is created, as well as allowing the container to push and pull changes to the code to and from git. The container also has the ability to update templated files with variables passed to docker in order to update your code and settings. There is support for lets encrypt SSL configurations, custom nginx configs, core nginx/PHP variable overrides for running preferences, X-Forwarded-For headers and UID mapping for local volume support.
+Example PHP-FPM 8.3 & Nginx 1.24 container image for Docker, built on [Alpine Linux](https://www.alpinelinux.org/).
 
-If you have improvements or suggestions please open an issue or pull request on the GitHub project page.
+Repository: https://github.com/TrafeX/docker-php-nginx
 
-### Versioning
-| Docker Tag | Git Release | Nginx Version | PHP Version | Alpine Version |
-|-----|-------|-----|--------|--------|
-|![docker version](https://img.shields.io/docker/v/richarvey/nginx-php-fpm?sort=semver)| Main Branch |1.24-r6 | 8.2.7 | 3.18 |
 
-For other tags please see: [versioning](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/versioning.md)
+* Built on the lightweight and secure Alpine Linux distribution
+* Multi-platform, supporting AMD4, ARMv6, ARMv7, ARM64
+* Very small Docker image size (+/-40MB)
+* Uses PHP 8.3 for the best performance, low CPU usage & memory footprint
+* Optimized for 100 concurrent users
+* Optimized to only use resources when there's traffic (by using PHP-FPM's `on-demand` process manager)
+* The services Nginx, PHP-FPM and supervisord run under a non-privileged user (nobody) to make it more secure
+* The logs of all the services are redirected to the output of the Docker container (visible with `docker logs -f <container name>`)
+* Follows the KISS principle (Keep It Simple, Stupid) to make it easy to understand and adjust the image to your needs
 
-__NOTE:__ From 2.0.5 onwards there are x86 and arm64 builds available
+[![Docker Pulls](https://img.shields.io/docker/pulls/trafex/php-nginx.svg)](https://hub.docker.com/r/trafex/php-nginx/)
+![nginx 1.24](https://img.shields.io/badge/nginx-1.24-brightgreen.svg)
+![php 8.3](https://img.shields.io/badge/php-8.3-brightgreen.svg)
+![License MIT](https://img.shields.io/badge/license-MIT-blue.svg)
 
-### Links
-- [https://github.com/richarvey/nginx-php-fpm](https://github.com/richarvey/nginx-php-fpm)
-- [https://hub.docker.com/repository/docker/richarvey/nginx-php-fpm/general](https://hub.docker.com/repository/docker/richarvey/nginx-php-fpm/general)
+## [![Trafex Consultancy](https://timdepater.com/logo/mini-logo.png)](https://timdepater.com?mtm_campaign=github)
+I can help you with [Containerization, Kubernetes, Monitoring, Infrastructure as Code and other DevOps challenges](https://timdepater.com/?mtm_campaign=github).
 
-## Quick Start
-To pull from docker hub:
-```
-docker pull richarvey/nginx-php-fpm:latest
-```
-### Running
-To simply run the container:
-```
-sudo docker run -d richarvey/nginx-php-fpm
-```
-To dynamically pull code from git when starting:
-```
-docker run -d -e 'GIT_EMAIL=email_address' -e 'GIT_NAME=full_name' -e 'GIT_USERNAME=git_username' -e 'GIT_REPO=github.com/project' -e 'GIT_PERSONAL_TOKEN=<long_token_string_here>' richarvey/nginx-php-fpm:latest
-```
 
-You can then browse to ```http://<DOCKER_HOST>``` to view the default install files. To find your ```DOCKER_HOST``` use the ```docker inspect``` to get the IP address (normally 172.17.0.2)
+## Goal of this project
+The goal of this container image is to provide an example for running Nginx and PHP-FPM in a container which follows
+the best practices and is easy to understand and modify to your needs.
 
-For more detailed examples and explanations please refer to the documentation.
-## Documentation
+## Usage
 
-- [Building from source](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/building.md)
-- [Versioning](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/versioning.md)
-- [Config Flags](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/config_flags.md)
-- [Git Auth](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/git_auth.md)
-- [Personal Access token](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/git_auth.md#personal-access-token)
-- [SSH Keys](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/git_auth.md#ssh-keys)
-- [Git Commands](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/git_commands.md)
-- [Push](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/git_commands.md#push-code-to-git)
-- [Pull](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/git_commands.md#pull-code-from-git-refresh)
-- [Repository layout / webroot](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/repo_layout.md)
-- [webroot](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/repo_layout.md#src--webroot)
-- [User / Group Identifiers](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/UID_GID_Mapping.md)
-- [Custom Nginx Config files](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/nginx_configs.md)
-- [REAL IP / X-Forwarded-For Headers](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/nginx_configs.md#real-ip--x-forwarded-for-headers)
-- [Scripting and Templating](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/scripting_templating.md)
-- [Environment Variables](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/scripting_templating.md#using-environment-variables--templating)
-- [Lets Encrypt Support](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/lets_encrypt.md)
-- [Setup](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/lets_encrypt.md#setup)
-- [Renewal](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/lets_encrypt.md#renewal)
-- [PHP Modules](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/php_modules.md)
-- [Xdebug](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/xdebug.md)
-- [Logging and Errors](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/logs.md)
+Start the Docker container:
 
-## Guides
-- [Running in Kubernetes](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/guides/kubernetes.md)
-- [Using Docker Compose](https://github.com/richarvey/nginx-php-fpm/blob/main/docs/guides/docker_compose.md)
+    docker run -p 80:8080 trafex/php-nginx
+
+See the PHP info on http://localhost, or the static html page on http://localhost/test.html
+
+Or mount your own code to be served by PHP-FPM & Nginx
+
+    docker run -p 80:8080 -v ~/my-codebase:/var/www/html trafex/php-nginx
+
+## Configuration
+In [config/](config/) you'll find the default configuration files for Nginx, PHP and PHP-FPM.
+If you want to extend or customize that you can do so by mounting a configuration file in the correct folder;
+
+Nginx configuration:
+
+    docker run -v "`pwd`/nginx-server.conf:/etc/nginx/conf.d/server.conf" trafex/php-nginx
+
+PHP configuration:
+
+    docker run -v "`pwd`/php-setting.ini:/etc/php83/conf.d/settings.ini" trafex/php-nginx
+
+PHP-FPM configuration:
+
+    docker run -v "`pwd`/php-fpm-settings.conf:/etc/php83/php-fpm.d/server.conf" trafex/php-nginx
+
+_Note; Because `-v` requires an absolute path I've added `pwd` in the example to return the absolute path to the current directory_
+
+## Documentation and examples
+To modify this container to your specific needs please see the following examples;
+
+* [Adding xdebug support](https://github.com/TrafeX/docker-php-nginx/blob/master/docs/xdebug-support.md)
+* [Adding composer](https://github.com/TrafeX/docker-php-nginx/blob/master/docs/composer-support.md)
+* [Getting the real IP of the client behind a load balancer](https://github.com/TrafeX/docker-php-nginx/blob/master/docs/real-ip-behind-loadbalancer.md)
+* [Sending e-mails](https://github.com/TrafeX/docker-php-nginx/blob/master/docs/sending-emails.md)

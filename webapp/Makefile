@@ -10,7 +10,8 @@ C_END='\033[0m'
 
 include ../.env
 
-DOCKER_NAME=$(PROJECT)
+DOCKER_PORT=$(WEBAPP_PORT)
+DOCKER_NAME=$(PROJECT)$(WEBAPP_PROJECT)$(PROJECT_CODE)
 CURRENT_DIR=$(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 DIR_BASENAME=$(shell basename $(CURRENT_DIR))
 ROOT_DIR=$(CURRENT_DIR)
@@ -18,44 +19,55 @@ PROJECT_DIR=src
 CURRENT_USER=sudo
 DOCKER_COMPOSE?=$(CURRENT_USER) docker compose
 DOCKER_COMPOSE_RUN=$(DOCKER_COMPOSE) run --rm
-DOCKER_EXEC_TOOLS_APP=$(CURRENT_USER) docker exec -it $(PROJECT)$(WEBAPP_PROJECT) sh
+DOCKER_EXEC_TOOLS_APP=$(CURRENT_USER) docker exec -it $(DOCKER_NAME) sh
 NODE_INSTALL="npm i"
 SERVER_RUN="npm run dev"
 
-#
-# Helpers
-#
-.PHONY: fix-permission docker-enviroment docker-enviroment-set
+help: ## shows this Makefile help message
+	echo 'usage: make [target]'
+	echo
+	echo 'targets:'
+	egrep '^(.+)\:\ ##\ (.+)' ${MAKEFILE_LIST} | column -t -c 2 -s ':#'
 
-fix-permission:
+# -------------------------------------------------------------------------------------------------
+#  System
+# -------------------------------------------------------------------------------------------------
+.PHONY: fix-permission
+
+fix-permission: ## sets project directory permission
 	$(CURRENT_USER) chown -R ${USER}: $(ROOT_DIR)/
 
-docker-enviroment:
+system-check: ## shows this project ports availability on local machine
+	echo "Checking configuration for "${C_YEL}"$(DOCKER_NAME)"${C_END}" App Container:";
+	if [ -z "$$($(CURRENT_USER) lsof -i :$(DOCKER_PORT))" ]; then \
+		echo ${C_BLU}"WEBAPP"${C_END}" > port:"${C_GRN}"$(DOCKER_PORT) is free to use."${C_END}; \
+    else \
+		echo ${C_BLU}"WEBAPP"${C_END}" > port:"${C_RED}"$(DOCKER_PORT) is busy. Update ./.env file."${C_END}; \
+	fi
+
+# -------------------------------------------------------------------------------------------------
+#  Docker
+# -------------------------------------------------------------------------------------------------
+.PHONY: env env-set
+
+env: ## checks if docker .env file exists
 	if [ -f ./docker/.env ]; then \
 		echo ${C_BLU}"WEBAPP DOCKER ENV"${C_END}" file "${C_GRN}"is set."${C_END}; \
     else \
-		echo ${C_BLU}"WEBAPP DOCKER ENV"${C_END}${C_YEL}" is not set."${C_END}"\
-	Create one placed in ./ by "${C_YEL}"$$ make webapp-docker-env"${C_END}" \
-	or in ./$(DIR_BASENAME)/ by "${C_YEL}"$$ make docker-enviroment-set"${C_END}; \
+		echo ${C_BLU}"WEBAPP DOCKER ENV"${C_END}${C_YEL}" is not set."${C_END}" \
+	Create one placed in ./ by "${C_YEL}"$$ make webapp-env"${C_END}" \
+	or in ./$(DIR_BASENAME)/ by "${C_YEL}"$$ make env-set"${C_END}; \
 	fi
 
-docker-enviroment-set:
-	echo "PROJECT=${PROJECT}${WEBAPP_PROJECT}\
-	\nPROJECT_PORT=${WEBAPP_PORT}" > ./docker/.env;
+env-set: ## sets docker .env file
+	echo "PROJECT=$(DOCKER_NAME)\
+	\nPROJECT_PORT=$(DOCKER_PORT)" > ./docker/.env;
 	echo ${C_BLU}"WEBAPP DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END};
-
-#
-# Enter container
-#
-.PHONY: ssh
-
-ssh:
-	$(DOCKER_EXEC_TOOLS_APP)
 
 #
 # Commands
 #
-.PHONY: build install dev up start first stop restart clear
+.PHONY: install build dev up start first stop restart clear
 
 build:
 	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
@@ -75,7 +87,7 @@ start:
 first:
 	build install dev
 
-stop: ## ${PROJECT}${WEBAPP_PROJECT}
+stop: ## ${PROJECT}${WEBADM_PROJECT}
 	cd docker && $(DOCKER_COMPOSE) kill || true
 	cd docker && $(DOCKER_COMPOSE) rm --force || true
 

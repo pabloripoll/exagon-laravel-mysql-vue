@@ -8,7 +8,7 @@ FROM alpine:${ALPINE_VERSION}
 # ALPINE CONFIG
 RUN apk add openrc bash git helm openssh yq github-cli
 
-#EXPOSE 80 443
+EXPOSE 80 443
 
 # NODE CONFIG
 COPY --from=node /usr/lib /usr/lib

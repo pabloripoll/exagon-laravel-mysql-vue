@@ -14,7 +14,7 @@ CURRENT_USER=sudo
 DOCKER=$(CURRENT_USER) docker
 DOCKER_COMPOSE=$(CURRENT_USER) docker compose
 
-help: ## Show this help message
+help: ## shows this Makefile help message
 	echo 'usage: make [target]'
 	echo
 	echo 'targets:'
@@ -25,18 +25,12 @@ help: ## Show this help message
 # -------------------------------------------------------------------------------------------------
 .PHONY: system-check
 
-system-check:
-	echo ${C_BLU}"DOCKER"${C_END}" requirements:";
+system-check: ## shows this project ports on local machine availability
+	echo ${C_BLU}"DOCKER requirements:"${C_END};
 	$(DOCKER) --version
 	$(DOCKER_COMPOSE) version
 	echo ""
-	echo "Checking configuration for "${C_YEL}"Web"${C_END}" Application:";
-	if [ -z "$$($(CURRENT_USER) lsof -i :$(WEBAPP_PORT))" ]; then \
-		echo ${C_BLU}"WEBAPP"${C_END}" > port:"${C_GRN}"$(WEBAPP_PORT) is free to use."${C_END}; \
-    else \
-		echo ${C_BLU}"WEBAPP"${C_END}" > port:"${C_RED}"$(WEBAPP_PORT) is busy. Update ./.env file."${C_END}; \
-	fi
-	cd ./$(WEBAPP_DIR) && $(MAKE) docker-enviroment;
+	cd ./$(WEBAPP_DIR) && $(MAKE) system-check docker-env;
 	echo ""
 	echo "Checking configuration for "${C_YEL}"Web Service"${C_END}" Application:";
 	if [ -z "$$($(CURRENT_USER) lsof -i :$(WEBAPP_SERVICE_PORT))" ]; then \
@@ -74,12 +68,12 @@ system-check:
 # -------------------------------------------------------------------------------------------------
 #  Docker
 # -------------------------------------------------------------------------------------------------
-.PHONY: images containers
+.PHONY: docker
 
-images:
+docker:
+	echo ${C_BLU}"DOCKER IMAGES"${C_END};
 	$(DOCKER) images
-
-containers:
+	echo ${C_BLU}"DOCKER CONTAINERS"${C_END};
 	$(DOCKER) ps
 
 # -------------------------------------------------------------------------------------------------
@@ -88,10 +82,13 @@ containers:
 .PHONY: webapp webapp-set
 
 webapp-env:
-	cd ./$(WEBAPP_DIR) && $(MAKE) docker-enviroment-set;
+	cd ./$(WEBAPP_DIR) && $(MAKE) docker-env-set;
 
-webapp-build:
-	cd ./$(WEBAPP_DIR) && $(MAKE) up dev;
+webapp-install:
+	cd ./$(WEBAPP_DIR) && $(MAKE) build up dev;
+
+webapp-start:
+	cd ./$(WEBAPP_DIR) && $(MAKE) build dev;
 
 # -------------------------------------------------------------------------------------------------
 #  Web ADMIN

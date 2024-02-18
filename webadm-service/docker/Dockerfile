@@ -1,162 +1,67 @@
-FROM php:8.2.7-fpm-alpine3.18
+ARG ALPINE_VERSION=3.19
+FROM alpine:${ALPINE_VERSION}
 
-LABEL maintainer="Ric Harvey <ric@squarecows.com>"
+LABEL Maintainer="Tim de Pater <code@trafex.nl>"
+LABEL Description="Lightweight container with Nginx 1.24 & PHP 8.3 based on Alpine Linux."
 
-ENV php_conf /usr/local/etc/php-fpm.conf
-ENV fpm_conf /usr/local/etc/php-fpm.d/www.conf
-ENV php_vars /usr/local/etc/php/conf.d/docker-vars.ini
-ENV LUAJIT_LIB=/usr/lib
-ENV LUAJIT_INC=/usr/include/luajit-2.1
+# Setup document root
+WORKDIR /var/www/html
 
-# resolves #166
-ENV LD_PRELOAD /usr/lib/preloadable_libiconv.so php
+# Install packages and remove default server definition
+RUN apk add --no-cache \
+  curl \
+  nginx \
+  php83 \
+  php83-ctype \
+  php83-curl \
+  php83-dom \
+  php83-fileinfo \
+  php83-fpm \
+  php83-gd \
+  php83-intl \
+  php83-mbstring \
+  php83-mysqli \
+  php83-opcache \
+  php83-openssl \
+  php83-phar \
+  php83-session \
+  php83-tokenizer \
+  php83-xml \
+  php83-xmlreader \
+  php83-xmlwriter \
+  supervisor
 
-RUN apk add --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community gnu-libiconv
+# Configure nginx - http
+COPY config/nginx.conf /etc/nginx/nginx.conf
 
+# Configure nginx - default server
+COPY config/conf.d /etc/nginx/conf.d/
 
-# INstall nginx + lua and devel kit
-RUN apk add --no-cache nginx \
-    nginx-mod-http-lua \
-    nginx-mod-devel-kit
+# Configure PHP-FPM
+ENV PHP_INI_DIR /etc/php83
+COPY config/fpm-pool.conf ${PHP_INI_DIR}/php-fpm.d/www.conf
+COPY config/php.ini ${PHP_INI_DIR}/conf.d/custom.ini
 
-RUN echo @testing https://dl-cdn.alpinelinux.org/alpine/edge/testing >> /etc/apk/repositories && \
-    echo /etc/apk/respositories && \
-    apk update && apk upgrade &&\
-    apk add --no-cache \
-    bash \
-    openssh-client \
-    wget \
-    supervisor \
-    curl \
-    libcurl \
-    libpq \
-    git \
-    python3 \
-    py3-pip \
-    dialog \
-    autoconf \
-    make \
-    libzip-dev \
-    bzip2-dev \
-    icu-dev \
-    tzdata \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libxslt-dev \
-    gcc
+# Configure supervisord
+COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-RUN apk add --no-cache --virtual .sys-deps \
-    musl-dev \
-    linux-headers \
-    augeas-dev \
-    libmcrypt-dev \
-    python3-dev \
-    libffi-dev \
-    sqlite-dev \
-    imap-dev \
-    postgresql-dev \
-    lua-resty-core \
-    libjpeg-turbo-dev \
-    libwebp-dev \
-    zlib-dev \
-    libxpm-dev \
-    libpng \
-    libpng-dev && \
-  # Install PHP modules
-    docker-php-ext-configure gd \
-      --enable-gd \
-      --with-freetype \
-      --with-jpeg && \
-    docker-php-ext-install gd && \
-     pip install --upgrade pip && \
-    docker-php-ext-install pdo_mysql mysqli pdo_sqlite pgsql pdo_pgsql exif intl xsl soap zip && \
-    pecl install -o -f xdebug && \
-    pecl install -o -f redis && \
-    pecl install -o -f mongodb && \
-    echo "extension=redis.so" > /usr/local/etc/php/conf.d/redis.ini && \
-    echo "extension=mongodb.so" > /usr/local/etc/php/conf.d/mongodb.ini && \
-    echo "zend_extension=xdebug" > /usr/local/etc/php/conf.d/xdebug.ini && \
-    docker-php-source delete && \
-    mkdir -p /var/www/app && \
-  # Install composer and certbot
-    mkdir -p /var/log/supervisor && \
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php composer-setup.php --quiet --install-dir=/usr/bin --filename=composer && \
-    rm composer-setup.php &&\
-  #  pip3 install -U pip && \
-    pip3 install -U certbot && \
-    mkdir -p /etc/letsencrypt/webrootauth && \
-    apk del gcc musl-dev linux-headers libffi-dev augeas-dev python3-dev make autoconf && \
-    apk del .sys-deps
+# Make sure files/folders needed by the processes are accessable when they run under the nobody user
+RUN chown -R nobody.nobody /var/www/html /run /var/lib/nginx /var/log/nginx
 
-ADD conf/supervisord.conf /etc/supervisord.conf
+# Create symlink for php
+RUN ln -s /usr/bin/php83 /usr/bin/php
 
-# Copy our nginx config
-RUN rm -Rf /etc/nginx/nginx.conf
-ADD conf/nginx.conf /etc/nginx/nginx.conf
+# Switch to use a non-root user from here on
+USER nobody
 
-# nginx site conf
-RUN mkdir -p /etc/nginx/sites-available/ && \
-mkdir -p /etc/nginx/sites-enabled/ && \
-mkdir -p /etc/nginx/ssl/ && \
-rm -Rf /var/www/* && \
-mkdir /var/www/html/
-ADD conf/nginx-site.conf /etc/nginx/sites-available/default.conf
-ADD conf/nginx-site-ssl.conf /etc/nginx/sites-available/default-ssl.conf
-RUN ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
+# Add application
+COPY --chown=nobody src/ /var/www/html/
 
-# tweak php-fpm config
-RUN echo "cgi.fix_pathinfo=0" > ${php_vars} &&\
-    echo "upload_max_filesize = 100M"  >> ${php_vars} &&\
-    echo "post_max_size = 100M"  >> ${php_vars} &&\
-    echo "variables_order = \"EGPCS\""  >> ${php_vars} && \
-    echo "memory_limit = 128M"  >> ${php_vars} && \
-    sed -i \
-        -e "s/;catch_workers_output\s*=\s*yes/catch_workers_output = yes/g" \
-        -e "s/pm.max_children = 5/pm.max_children = 4/g" \
-        -e "s/pm.start_servers = 2/pm.start_servers = 3/g" \
-        -e "s/pm.min_spare_servers = 1/pm.min_spare_servers = 2/g" \
-        -e "s/pm.max_spare_servers = 3/pm.max_spare_servers = 4/g" \
-        -e "s/;pm.max_requests = 500/pm.max_requests = 200/g" \
-        -e "s/user = www-data/user = nginx/g" \
-        -e "s/group = www-data/group = nginx/g" \
-        -e "s/;listen.mode = 0660/listen.mode = 0666/g" \
-        -e "s/;listen.owner = www-data/listen.owner = nginx/g" \
-        -e "s/;listen.group = www-data/listen.group = nginx/g" \
-        -e "s/listen = 127.0.0.1:9000/listen = \/var\/run\/php-fpm.sock/g" \
-        -e "s/^;clear_env = no$/clear_env = no/" \
-        ${fpm_conf}
-#    ln -s /etc/php7/php.ini /etc/php7/conf.d/php.ini && \
-RUN cp /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini && \
-	sed -i \
-	    -e "s/;opcache/opcache/g" \
-	    -e "s/;zend_extension=opcache/zend_extension=opcache/g" \
-            /usr/local/etc/php/php.ini
+# Expose the port nginx is reachable on
+EXPOSE 80
 
-# Add Scripts
-ADD scripts/start.sh /start.sh
-#ADD scripts/pull /usr/bin/pull
-#ADD scripts/push /usr/bin/push
-ADD scripts/letsencrypt-setup /usr/bin/letsencrypt-setup
-ADD scripts/letsencrypt-renew /usr/bin/letsencrypt-renew
+# Let supervisord start nginx & php-fpm
+CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
-#RUN chmod 755 /usr/bin/pull \
-#    && chmod 755 /usr/bin/push \
-#    && chmod 755 /usr/bin/letsencrypt-setup \
-#    && chmod 755 /usr/bin/letsencrypt-renew \
-#    && chmod 755 /start.sh
-RUN chmod 755 /usr/bin/letsencrypt-setup \
-    && chmod 755 /usr/bin/letsencrypt-renew \
-    && chmod 755 /start.sh
-
-# copy in code
-#ADD ../ /var/www/html/
-#ADD errors/ /var/www/errors
-#ADD ../storage/logs/ /var/www/errors # not working
-
-EXPOSE 443 80
-
-#WORKDIR "/var/www/html"
-
-CMD ["/start.sh"]
+# Configure a healthcheck to validate that everything is up&running
+HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping || exit 1
