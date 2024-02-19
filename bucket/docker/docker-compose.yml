@@ -11,6 +11,6 @@ services:
       - ${PROJECT_PORT}:80
     volumes:
       - type: bind
-        source: ../public
+        source: ../
         target: /var/www/html
     tty: true
