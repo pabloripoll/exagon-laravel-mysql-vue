@@ -68,11 +68,15 @@ system-check: ## shows this project ports on local machine availability
 # -------------------------------------------------------------------------------------------------
 #  Docker
 # -------------------------------------------------------------------------------------------------
-.PHONY: docker
+.PHONY: docker containers
 
 docker:
 	echo ${C_BLU}"DOCKER IMAGES"${C_END};
 	$(DOCKER) images
+	echo ${C_BLU}"DOCKER CONTAINERS"${C_END};
+	$(DOCKER) ps
+
+containers:
 	echo ${C_BLU}"DOCKER CONTAINERS"${C_END};
 	$(DOCKER) ps
 
@@ -117,6 +121,17 @@ mariadb-build:
 
 mariadb-service-set:
 	cd ./$(MARIADB_DIR) && $(MAKE) docker-enviroment-set;
+
+# -------------------------------------------------------------------------------------------------
+#  Bucket
+# -------------------------------------------------------------------------------------------------
+.PHONY: bucket-build bucket-clear
+
+bucket-build:
+	cd ./$(BUCKET_DIR) && $(MAKE) build up;
+
+bucket-clear:
+	cd ./$(BUCKET_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
 #  Repository

@@ -1,30 +1,28 @@
-ARG NODE_VERSION=21.6.0
-ARG ALPINE_VERSION=3.19.0
+FROM alpine:3.19
 
-FROM node:${NODE_VERSION}-alpine AS node
+RUN apk add --no-cache \
+    #ca-certificates \
+    gcc
 
-FROM alpine:${ALPINE_VERSION}
+ENV RUSTUP_HOME=/usr/local/rustup \
+    CARGO_HOME=/usr/local/cargo \
+    PATH=/usr/local/cargo/bin:$PATH \
+    RUST_VERSION=1.76.0
 
-# ALPINE CONFIG
-RUN apk add openrc bash git helm openssh yq github-cli
-
-#EXPOSE 80 443
-
-# NODE CONFIG
-COPY --from=node /usr/lib /usr/lib
-COPY --from=node /usr/local/lib /usr/local/lib
-COPY --from=node /usr/local/include /usr/local/include
-COPY --from=node /usr/local/bin /usr/local/bin
-
-RUN node -v
-
-RUN npm install -g yarn --force
-RUN npm -v
-RUN yarn -v
-
-COPY docker-entrypoint.sh /usr/local/bin/
-
-ENTRYPOINT ["docker-entrypoint.sh"]
-
-CMD ["node"]
-#CMD ["node", "path/to/project/script.js"]
+RUN set -eux; \
+    apkArch="$(apk --print-arch)"; \
+    case "$apkArch" in \
+        x86_64) rustArch='x86_64-unknown-linux-musl'; rustupSha256='7aa9e2a380a9958fc1fc426a3323209b2c86181c6816640979580f62ff7d48d4' ;; \
+        aarch64) rustArch='aarch64-unknown-linux-musl'; rustupSha256='b1962dfc18e1fd47d01341e6897cace67cddfabf547ef394e8883939bd6e002e' ;; \
+        *) echo >&2 "unsupported architecture: $apkArch"; exit 1 ;; \
+    esac; \
+    url="https://static.rust-lang.org/rustup/archive/1.26.0/${rustArch}/rustup-init"; \
+    wget "$url"; \
+    echo "${rustupSha256} *rustup-init" | sha256sum -c -; \
+    chmod +x rustup-init; \
+    ./rustup-init -y --no-modify-path --profile minimal --default-toolchain $RUST_VERSION --default-host ${rustArch}; \
+    rm rustup-init; \
+    chmod -R a+w $RUSTUP_HOME $CARGO_HOME; \
+    rustup --version; \
+    cargo --version; \
+    rustc --version;
