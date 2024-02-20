@@ -10,8 +10,10 @@ C_END='\033[0m'
 
 include ../.env
 
+DOCKER_ABBR="BUCKET"
 DOCKER_PORT=$(BUCKET_PORT)
 DOCKER_NAME=$(PROJECT)$(BUCKET_PROJECT)$(PROJECT_CODE)
+
 CURRENT_DIR=$(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 DIR_BASENAME=$(shell basename $(CURRENT_DIR))
 ROOT_DIR=$(CURRENT_DIR)
@@ -31,17 +33,17 @@ help: ## shows this Makefile help message
 # -------------------------------------------------------------------------------------------------
 #  System
 # -------------------------------------------------------------------------------------------------
-.PHONY: fix-permission
+.PHONY: fix-permission host-check
 
 fix-permission: ## sets project directory permission
 	$(CURRENT_USER) chown -R ${USER}: $(ROOT_DIR)/
 
-system-check: ## shows this project ports availability on local machine
+host-check: ## shows this project ports availability on local machine
 	echo "Checking configuration for "${C_YEL}"$(DOCKER_NAME)"${C_END}" App Container:";
 	if [ -z "$$($(CURRENT_USER) lsof -i :$(DOCKER_PORT))" ]; then \
-		echo ${C_BLU}"BUCKET"${C_END}" > port:"${C_GRN}"$(DOCKER_PORT) is free to use."${C_END}; \
+		echo ${C_BLU}"$(DOCKER_ABBR)"${C_END}" > port:"${C_GRN}"$(DOCKER_PORT) is free to use."${C_END}; \
     else \
-		echo ${C_BLU}"BUCKET"${C_END}" > port:"${C_RED}"$(DOCKER_PORT) is busy. Update ./.env file."${C_END}; \
+		echo ${C_BLU}"$(DOCKER_ABBR)"${C_END}" > port:"${C_RED}"$(DOCKER_PORT) is busy. Update ./.env file."${C_END}; \
 	fi
 
 # -------------------------------------------------------------------------------------------------
@@ -51,11 +53,11 @@ system-check: ## shows this project ports availability on local machine
 
 env: ## checks if docker .env file exists
 	if [ -f ./docker/.env ]; then \
-		echo ${C_BLU}"BUCKET DOCKER ENV"${C_END}" file "${C_GRN}"is set."${C_END}; \
+		echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"is set."${C_END}; \
     else \
-		echo ${C_BLU}"BUCKET DOCKER ENV"${C_END}${C_YEL}" is not set."${C_END}" \
-	Create one placed in ./ by "${C_YEL}"$$ make webapp-env"${C_END}" \
-	or in ./$(DIR_BASENAME)/ by "${C_YEL}"$$ make env-set"${C_END}; \
+		echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}${C_YEL}" is not set."${C_END}" \
+	Create it from root dir by "${C_YEL}"$$ make $(shell echo $(DOCKER_ABBR) | tr A-Z a-z)-env-set"${C_END}" \
+	or from ./$(DIR_BASENAME)/ by "${C_YEL}"$$ make env-set"${C_END}; \
 	fi
 
 env-set: ## sets docker .env file

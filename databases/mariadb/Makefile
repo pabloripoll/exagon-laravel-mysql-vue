@@ -10,73 +10,107 @@ C_END='\033[0m'
 
 include ../../.env
 
-DOCKER_NAME=$(PROJECT)$(MARIADB_DB_PROJECT)
+DOCKER_ABBR="WEBADM_DB"
+DOCKER_PORT=$(WEBADM_DB_PORT)
+DOCKER_NAME=$(PROJECT)$(WEBADM_DB_PROJECT)$(PROJECT_CODE)
+
 CURRENT_DIR=$(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 DIR_BASENAME=$(shell basename $(CURRENT_DIR))
 ROOT_DIR=$(CURRENT_DIR)
-PROJECT_DIR=src
 CURRENT_USER=sudo
 DOCKER_COMPOSE?=$(CURRENT_USER) docker compose
 DOCKER_COMPOSE_RUN=$(DOCKER_COMPOSE) run --rm
 DOCKER_EXEC_TOOLS_APP=$(CURRENT_USER) docker exec -it $(DOCKER_NAME) sh
 
-#
-# Helpers
-#
-.PHONY: fix-permission docker-enviroment docker-enviroment-set
+help: ## shows this Makefile help message
+	echo 'usage: make [target]'
+	echo
+	echo 'targets:'
+	egrep '^(.+)\:\ ##\ (.+)' ${MAKEFILE_LIST} | column -t -c 2 -s ':#'
 
-fix-permission:
+# -------------------------------------------------------------------------------------------------
+#  System
+# -------------------------------------------------------------------------------------------------
+.PHONY: fix-permission host-check
+
+fix-permission: ## sets project directory permission
 	$(CURRENT_USER) chown -R ${USER}: $(ROOT_DIR)/
 
-docker-enviroment:
-	if [ -f ./.env ]; then \
-		echo ${C_BLU}"MARIADB ENV"${C_END}" file "${C_GRN}"is set."${C_END}; \
+host-check: ## shows this project ports availability on local machine
+	echo "Checking configuration for "${C_YEL}"$(DOCKER_NAME)"${C_END}" container:";
+	if [ -z "$$($(CURRENT_USER) lsof -i :$(DOCKER_PORT))" ]; then \
+		echo ${C_BLU}"$(DOCKER_ABBR)"${C_END}" > port:"${C_GRN}"$(DOCKER_PORT) is free to use."${C_END}; \
     else \
-		echo ${C_BLU}"MARIADB ENV"${C_END}${C_YEL}" is not set."${C_END}"\
-	Create one placed in ./ by "${C_YEL}"$$ make mariadb-docker-env"${C_END}" \
-	or in ./$(MARIADB_DB_DIR)/ by "${C_YEL}"$$ make docker-enviroment-set"${C_END}; \
+		echo ${C_BLU}"$(DOCKER_ABBR)"${C_END}" > port:"${C_RED}"$(DOCKER_PORT) is busy. Update ./.env file."${C_END}; \
 	fi
 
-docker-enviroment-set:
-	echo "PROJECT=$(PROJECT)$(MARIADB_DB_PROJECT)\
-	\nPROJECT_PORT=$(MARIADB_DB_PORT)\
-	\nMYSQL_ROOT_PASSWORD=\"$(MARIADB_DB_ROOT)\"\
-	\nMYSQL_DATABASE=$(MARIADB_DB_NAME)\
-	\nMYSQL_USER=$(MARIADB_DB_USER)\
-	\nMYSQL_PASSWORD=\"$(MARIADB_DB_PASS)\""> ./.env;
+# -------------------------------------------------------------------------------------------------
+#  Enviroment
+# -------------------------------------------------------------------------------------------------
+.PHONY: env env-set
+
+env: ## checks if docker .env file exists
+	if [ -f ./docker/.env ]; then \
+		echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"is set."${C_END}; \
+    else \
+		echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}${C_YEL}" is not set."${C_END}" \
+	Create it from root dir by "${C_YEL}"$$ make $(shell echo $(DOCKER_ABBR) | tr A-Z a-z)-env-set"${C_END}" \
+	or from ./$(DIR_BASENAME)/ by "${C_YEL}"$$ make env-set"${C_END}; \
+	fi
+
+env-set:
+	echo "PROJECT=$(PROJECT)$(WEBADM_DBS_PROJECT)\
+	\nPROJECT_PORT=$(WEBADM_DBS_PORT)\
+	\nMYSQL_ROOT_PASSWORD=\"$(WEBADM_DBS_ROOT)\"\
+	\nMYSQL_DATABASE=$(WEBADM_DBS_NAME)\
+	\nMYSQL_USER=$(WEBADM_DBS_USER)\
+	\nMYSQL_PASSWORD=\"$(WEBADM_DBS_PASS)\""> ./.env;
 	echo $(C_BLU)"MARIADB ENV"$(C_END)" file "$(C_GRN)"has been set."$(C_END);
 
-#
-# Enter container
-#
-.PHONY: ssh
+# -------------------------------------------------------------------------------------------------
+#  Container
+# -------------------------------------------------------------------------------------------------
+.PHONY: ssh build install dev up start first stop restart clear
 
 ssh:
 	$(DOCKER_EXEC_TOOLS_APP)
 
-#
-# Commands
-#
-.PHONY: build up start first stop restart clear
+cli:
+	$(CURRENT_USER) docker exec -it $(DOCKER_NAME) redis-cli -a $(REDIS_DB_PASS)
 
 build:
-	$(DOCKER_COMPOSE) up --build --no-recreate -d
+	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
+
+install:
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(NODE_INSTALL)
+
+dev:
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(SERVER_RUN)
 
 up:
-	$(DOCKER_COMPOSE) up -d
+	cd docker && $(DOCKER_COMPOSE) up -d
+	$(CURRENT_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)
+	echo $(DOCKER_PORT)
+
+container-ip:
+	$(CURRENT_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)
+	echo $(DOCKER_PORT)
 
 start:
 	up
 
+first:
+	build install up
+
 stop:
-	$(DOCKER_COMPOSE) kill || true
-	$(DOCKER_COMPOSE) rm --force || true
+	cd docker && $(DOCKER_COMPOSE) kill || true
+	cd docker && $(DOCKER_COMPOSE) rm --force || true
+
+clear:
+	cd docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true
+
+rebuild:
+	stop start
 
 restart:
 	stop start
-
-clear:
-	$(DOCKER_COMPOSE) down -v --remove-orphans || true
-
-rebuild:
-	stop clear build start

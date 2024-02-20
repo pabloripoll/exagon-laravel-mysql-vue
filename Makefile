@@ -29,21 +29,21 @@ system-check: ## shows this project ports on local machine availability
 	echo ${C_BLU}"DOCKER requirements:"${C_END};
 	$(DOCKER) --version
 	$(DOCKER_COMPOSE) version
-	echo ""
-	cd ./$(WEBAPP_DIR) && $(MAKE) system-check docker-env;
-	echo ""
-	cd ./$(WEBAPP_API_DIR) && $(MAKE) system-check docker-env;
-	echo ""
-	cd ./$(WEBAPP_DB_DIR) && $(MAKE) system-check docker-env;
-	echo ""
-	cd ./$(WEBADM_DIR) && $(MAKE) system-check docker-env;
-	echo ""
-	cd ./$(WEBADM_API_DIR) && $(MAKE) system-check docker-env;
-	echo ""
-	cd ./$(WEBADM_DB_DIR) && $(MAKE) system-check docker-env;
-	echo ""
-	cd ./$(BUCKET_DIR) && $(MAKE) system-check docker-env;
-	echo ""
+	echo "";
+	cd ./$(WEBAPP_DIR) && $(MAKE) host-check env;
+	echo "";
+	cd ./$(WEBAPP_API_DIR) && $(MAKE) host-check env;
+	echo "";
+	cd ./$(WEBAPP_DB_DIR) && $(MAKE) host-check env;
+	echo "";
+	cd ./$(WEBADM_DIR) && $(MAKE) host-check env;
+	echo "";
+	cd ./$(WEBADM_API_DIR) && $(MAKE) host-check env;
+	echo "";
+	cd ./$(WEBADM_DB_DIR) && $(MAKE) host-check env;
+	echo "";
+	cd ./$(BUCKET_DIR) && $(MAKE) host-check env;
+	echo "";
 
 # -------------------------------------------------------------------------------------------------
 #  Docker
@@ -62,47 +62,76 @@ containers:
 # -------------------------------------------------------------------------------------------------
 #  Webapp
 # -------------------------------------------------------------------------------------------------
-.PHONY: webapp-ssh webapp-env webapp-create webapp-remove
+.PHONY: webapp-ssh webapp-env webapp-env-set webapp-create webapp-remove
 
 webapp-ssh:
-	cd ./$(REDIS_DB_DIR) && $(MAKE) ssh;
+	cd ./$(WEBAPP_DIR) && $(MAKE) ssh;
 
 webapp-env:
-	cd ./$(REDIS_DB_DIR) && $(MAKE) docker-enviroment-set;
+	cd ./$(WEBAPP_DIR) && $(MAKE) env;
+
+webapp-env-set:
+	cd ./$(WEBAPP_DIR) && $(MAKE) env-set;
 
 webapp-create:
-	cd ./$(REDIS_DB_DIR) && $(MAKE) build up dev;
+	cd ./$(WEBAPP_DIR) && $(MAKE) build up dev;
 
 webapp-remove:
-	cd ./$(REDIS_DB_DIR) && $(MAKE) stop clear;
+	cd ./$(WEBAPP_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
-#  Web Application DB
+#  Webapp API
+# -------------------------------------------------------------------------------------------------
+.PHONY: webapp-api-ssh webapp-api-env webapp-api-env-set webapp-api-create webapp-api-remove
+
+webapp-api-ssh:
+	cd ./$(WEBAPP_API_DIR) && $(MAKE) ssh;
+
+webapp-api-env:
+	cd ./$(WEBAPP_API_DIR) && $(MAKE) env;
+
+webapp-api-env-set:
+	cd ./$(WEBAPP_DIR) && $(MAKE) env-set;
+
+webapp-api-create:
+	cd ./$(WEBAPP_API_DIR) && $(MAKE) build up dev;
+
+webapp-api-remove:
+	cd ./$(WEBAPP_API_DIR) && $(MAKE) stop clear;
+
+# -------------------------------------------------------------------------------------------------
+#  Webapp DB
 # -------------------------------------------------------------------------------------------------
 .PHONY: webapp-db-ssh webapp-db-env webapp-db-create webapp-db-remove
 
 webapp-db-ssh:
-	cd ./$(REDIS_DB_DIR) && $(MAKE) ssh;
+	cd ./$(WEBAPP_DB_DIR) && $(MAKE) ssh;
 
 webapp-db-env:
-	cd ./$(REDIS_DB_DIR) && $(MAKE) docker-enviroment-set;
+	cd ./$(WEBAPP_DB_DIR) && $(MAKE) env;
+
+webapp-db-env-set:
+	cd ./$(WEBAPP_DIR) && $(MAKE) env-set;
 
 webapp-db-create:
-	cd ./$(REDIS_DB_DIR) && $(MAKE) build up;
+	cd ./$(WEBAPP_DB_DIR) && $(MAKE) build up;
 
 webapp-db-remove:
-	cd ./$(REDIS_DB_DIR) && $(MAKE) stop clear;
+	cd ./$(WEBAPP_DB_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
-#  Web Back Office
+#  Backoffice
 # -------------------------------------------------------------------------------------------------
-.PHONY: webadm-ssh webadm-env webadm-create webadm-remove
+.PHONY: webadm-ssh webadm-env webadm-env-set webadm-create webadm-remove
 
 webadm-ssh:
 	cd ./$(WEBADM_DIR) && $(MAKE) ssh;
 
 webadm-env:
-	cd ./$(WEBADM_DIR) && $(MAKE) docker-enviroment-set;
+	cd ./$(WEBADM_DIR) && $(MAKE) env;
+
+webadm-env-set:
+	cd ./$(WEBADM_DIR) && $(MAKE) env-set;
 
 webadm-create:
 	cd ./$(WEBADM_DIR) && $(MAKE) build up;
@@ -111,21 +140,44 @@ webadm-remove:
 	cd ./$(WEBADM_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
-#  Web Back Office DB
+#  Backoffice API
 # -------------------------------------------------------------------------------------------------
-.PHONY: webadm-db-ssh webadm-db-env webadm-db-create webadm-db-remove
+.PHONY: webadm-api-ssh webadm-api-env webadm-api-env-set webadm-api-create webadm-api-remove
+
+webadm-api-ssh:
+	cd ./$(WEBADM_API_DIR) && $(MAKE) ssh;
+
+webadm-api-env:
+	cd ./$(WEBADM_API_DIR) && $(MAKE) env;
+
+webadm-api-env-set:
+	cd ./$(WEBADM_API_DIR) && $(MAKE) env-set;
+
+webadm-api-create:
+	cd ./$(WEBADM_API_DIR) && $(MAKE) build up;
+
+webadm-api-remove:
+	cd ./$(WEBADM_API_DIR) && $(MAKE) stop clear;
+
+# -------------------------------------------------------------------------------------------------
+# Backoffice DB
+# -------------------------------------------------------------------------------------------------
+.PHONY: webadm-db-ssh webadm-db-env webadm-db-env-set webadm-db-create webadm-db-remove
 
 webadm-db-ssh:
-	cd ./$(MARIADB_DB_DIR) && $(MAKE) ssh;
+	cd ./$(WEBADM_DB_DIR) && $(MAKE) ssh;
 
 webadm-db-env:
-	cd ./$(MARIADB_DB_DIR) && $(MAKE) docker-enviroment-set;
+	cd ./$(WEBADM_DB_DIR) && $(MAKE) env;
+
+webadm-db-env-set:
+	cd ./$(WEBADM_DB_DIR) && $(MAKE) env-set;
 
 webadm-db-create:
-	cd ./$(MARIADB_DB_DIR) && $(MAKE) build up;
+	cd ./$(WEBADM_DB_DIR) && $(MAKE) build up;
 
 webadm-db-remove:
-	cd ./$(MARIADB_DB_DIR) && $(MAKE) stop clear;
+	cd ./$(WEBADM_DB_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
 #  Bucket
@@ -136,7 +188,7 @@ bucket-ssh:
 	cd ./$(BUCKET_DIR) && $(MAKE) ssh;
 
 bucket-env:
-	cd ./$(BUCKET_DIR) && $(MAKE) docker-enviroment-set;
+	cd ./$(BUCKET_DIR) && $(MAKE) env;
 
 bucket-create:
 	cd ./$(BUCKET_DIR) && $(MAKE) build up;
