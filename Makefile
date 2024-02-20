@@ -125,12 +125,12 @@ mariadb-service-set:
 # -------------------------------------------------------------------------------------------------
 #  Bucket
 # -------------------------------------------------------------------------------------------------
-.PHONY: bucket-build bucket-clear
+.PHONY: bucket-create bucket-clear
 
-bucket-build:
+bucket-create:
 	cd ./$(BUCKET_DIR) && $(MAKE) build up;
 
-bucket-clear:
+bucket-remove:
 	cd ./$(BUCKET_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------

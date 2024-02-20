@@ -29,10 +29,10 @@ RUN apk add --no-cache \
   php83-tokenizer \
   php83-xml \
   php83-xmlreader \
-  php83-xmlwriter \
+  php83-xmlwriter
   ## database ext
-  php83-mysqli \
-  php83-redis
+  #php83-mysqli \
+  #php83-redis
 
 # Configure nginx - http
 COPY config/nginx.conf /etc/nginx/nginx.conf
