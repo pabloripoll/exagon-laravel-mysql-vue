@@ -182,7 +182,7 @@ webadm-db-remove:
 # -------------------------------------------------------------------------------------------------
 #  Bucket
 # -------------------------------------------------------------------------------------------------
-.PHONY: bucket-ssh bucket-env bucket-create bucket-remove
+.PHONY: bucket-ssh bucket-env bucket-env-set bucket-create bucket-remove
 
 bucket-ssh:
 	cd ./$(BUCKET_DIR) && $(MAKE) ssh;
@@ -190,11 +190,25 @@ bucket-ssh:
 bucket-env:
 	cd ./$(BUCKET_DIR) && $(MAKE) env;
 
+bucket-env-set:
+	cd ./$(BUCKET_DIR) && $(MAKE) env-set;
+
 bucket-create:
 	cd ./$(BUCKET_DIR) && $(MAKE) build up;
 
 bucket-remove:
 	cd ./$(BUCKET_DIR) && $(MAKE) stop clear;
+
+# -------------------------------------------------------------------------------------------------
+#  PROJECT
+# -------------------------------------------------------------------------------------------------
+.PHONY: backoffice-create backoffice-remove
+
+backoffice-create:
+	bucket-env-set webadm-env-set webadm-db-env-set webadm-api-env-set
+
+backoffice-remove:
+	cd ./$(WEBADM_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
 #  Repository

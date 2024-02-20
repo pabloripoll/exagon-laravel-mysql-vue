@@ -65,7 +65,7 @@ env-set:
 	\nMYSQL_DATABASE=$(WEBADM_DBS_NAME)\
 	\nMYSQL_USER=$(WEBADM_DBS_USER)\
 	\nMYSQL_PASSWORD=\"$(WEBADM_DBS_PASS)\""> ./.env;
-	echo $(C_BLU)"MARIADB ENV"$(C_END)" file "$(C_GRN)"has been set."$(C_END);
+	echo $(C_BLU)"$(DOCKER_ABBR) DOCKER ENV"$(C_END)" file "$(C_GRN)"has been set."$(C_END);
 
 # -------------------------------------------------------------------------------------------------
 #  Container
