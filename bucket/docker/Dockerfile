@@ -10,9 +10,10 @@ WORKDIR /var/www/html
 # Install packages and remove default server definition
 RUN apk add --no-cache \
   curl \
+  wget \
   nginx \
   supervisor \
-  ## PHP
+  ## PHP extensions
   php83 \
   php83-ctype \
   php83-curl \
@@ -30,9 +31,14 @@ RUN apk add --no-cache \
   php83-xml \
   php83-xmlreader \
   php83-xmlwriter
-  ## database ext
+  # Database
   #php83-mysqli \
-  #php83-redis
+  #php83-redis\
+
+# PHP Composer
+RUN wget https://getcomposer.org/installer -O composer-setup.php && \
+  php83 composer-setup.php --quiet --install-dir=/usr/bin --filename=composer && \
+  rm composer-setup.php
 
 # Configure nginx - http
 COPY config/nginx.conf /etc/nginx/nginx.conf
