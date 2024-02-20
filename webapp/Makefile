@@ -67,7 +67,10 @@ env-set: ## sets docker .env file
 #
 # Commands
 #
-.PHONY: install build dev up start first stop restart clear
+.PHONY: ssh build install dev up start first stop restart clear
+
+ssh:
+	$(DOCKER_EXEC_TOOLS_APP)
 
 build:
 	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
@@ -80,6 +83,12 @@ dev:
 
 up:
 	cd docker && $(DOCKER_COMPOSE) up -d
+	$(CURRENT_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)
+	echo $(DOCKER_PORT)
+
+container-ip:
+	$(CURRENT_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)
+	echo $(DOCKER_PORT)
 
 start:
 	up dev
@@ -87,12 +96,12 @@ start:
 first:
 	build install dev
 
-stop: ## ${PROJECT}${WEBADM_PROJECT}
+stop:
 	cd docker && $(DOCKER_COMPOSE) kill || true
 	cd docker && $(DOCKER_COMPOSE) rm --force || true
 
 restart:
 	stop start dev
 
-clear: ## stop $(ROOT_DIR)/docker-compose.yml
+clear:
 	cd docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true

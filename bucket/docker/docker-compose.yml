@@ -13,4 +13,9 @@ services:
       - type: bind
         source: ../
         target: /var/www/html
+    healthcheck:
+      test: ["CMD-SHELL", "curl --silent --fail http://localhost:${PROJECT_PORT}/fpm-ping || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     tty: true

@@ -11,6 +11,8 @@ WORKDIR /var/www/html
 RUN apk add --no-cache \
   curl \
   nginx \
+  supervisor \
+  ## PHP
   php83 \
   php83-ctype \
   php83-curl \
@@ -20,7 +22,6 @@ RUN apk add --no-cache \
   php83-gd \
   php83-intl \
   php83-mbstring \
-  php83-mysqli \
   php83-opcache \
   php83-openssl \
   php83-phar \
@@ -29,7 +30,9 @@ RUN apk add --no-cache \
   php83-xml \
   php83-xmlreader \
   php83-xmlwriter \
-  supervisor
+  ## database ext
+  php83-mysqli \
+  php83-redis
 
 # Configure nginx - http
 COPY config/nginx.conf /etc/nginx/nginx.conf
@@ -64,4 +67,4 @@ EXPOSE 80
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
 
 # Configure a healthcheck to validate that everything is up&running
-HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping || exit 1
+#HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping || exit 1

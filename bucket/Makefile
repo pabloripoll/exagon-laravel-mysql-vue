@@ -96,12 +96,12 @@ start:
 first:
 	build install dev
 
-stop: ## ${PROJECT}${WEBADM_PROJECT}
+stop:
 	cd docker && $(DOCKER_COMPOSE) kill || true
 	cd docker && $(DOCKER_COMPOSE) rm --force || true
 
 restart:
 	stop start dev
 
-clear: ## stop $(ROOT_DIR)/docker-compose.yml
+clear:
 	cd docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true
