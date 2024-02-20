@@ -75,26 +75,42 @@ env-set:
 ssh:
 	$(DOCKER_EXEC_TOOLS_APP)
 
+cli:
+	$(CURRENT_USER) docker exec -it $(DOCKER_NAME) redis-cli -a $(REDIS_DB_PASS)
+
 build:
 	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
+
+install:
+	echo "none";
+
+dev:
+	echo "none";
 
 up:
 	cd docker && $(DOCKER_COMPOSE) up -d
 	$(CURRENT_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)
 	echo 127.0.0.1:$(DOCKER_PORT)
 
+container-ip:
+	$(CURRENT_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)
+	echo 127.0.0.1:$(DOCKER_PORT)
+
 start:
 	up
+
+first:
+	build install up
 
 stop:
 	cd docker && $(DOCKER_COMPOSE) kill || true
 	cd docker && $(DOCKER_COMPOSE) rm --force || true
 
-restart:
-	stop start
-
 clear:
 	cd docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true
 
 rebuild:
-	stop clear build start
+	stop start
+
+restart:
+	stop start

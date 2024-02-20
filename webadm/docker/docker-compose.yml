@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   node:
-    image: node-21.6:alpine-3.19
+    image: node-21.6:${PROJECT}
     build:
       context: ./
       dockerfile: Dockerfile
