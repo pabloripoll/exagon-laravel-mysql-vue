@@ -15,13 +15,10 @@ DOCKER_NAME=$(PROJECT)$(REDIS_DB_PROJECT)$(PROJECT_CODE)
 CURRENT_DIR=$(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 DIR_BASENAME=$(shell basename $(CURRENT_DIR))
 ROOT_DIR=$(CURRENT_DIR)
-PROJECT_DIR=src
 CURRENT_USER=sudo
 DOCKER_COMPOSE?=$(CURRENT_USER) docker compose
 DOCKER_COMPOSE_RUN=$(DOCKER_COMPOSE) run --rm
 DOCKER_EXEC_TOOLS_APP=$(CURRENT_USER) docker exec -it $(DOCKER_NAME) sh
-NODE_INSTALL="npm i"
-SERVER_RUN="npm run dev"
 
 help: ## shows this Makefile help message
 	echo 'usage: make [target]'
@@ -46,7 +43,7 @@ system-check: ## shows this project ports availability on local machine
 	fi
 
 # -------------------------------------------------------------------------------------------------
-#  Docker
+#  Enviroment
 # -------------------------------------------------------------------------------------------------
 .PHONY: env env-set
 
@@ -61,12 +58,13 @@ env: ## checks if docker .env file exists
 
 env-set: ## sets docker .env file
 	echo "PROJECT=$(DOCKER_NAME)\
-	\nPROJECT_PORT=$(DOCKER_PORT)" > ./docker/.env;
+	\nPROJECT_PORT=$(DOCKER_PORT)\
+	\nDB_PASSWORD=$(DOCKER_PORT)" > ./docker/.env;
 	echo ${C_BLU}"REDIS_DB DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END};
 
-#
-# Commands
-#
+# -------------------------------------------------------------------------------------------------
+#  Container
+# -------------------------------------------------------------------------------------------------
 .PHONY: ssh build install dev up start first stop restart clear
 
 ssh:
@@ -99,12 +97,12 @@ start:
 first:
 	build install dev
 
-stop: ## ${PROJECT}${WEBADM_PROJECT}
+stop:
 	cd docker && $(DOCKER_COMPOSE) kill || true
 	cd docker && $(DOCKER_COMPOSE) rm --force || true
 
 restart:
 	stop start dev
 
-clear: ## stop $(ROOT_DIR)/docker-compose.yml
+clear:
 	cd docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true

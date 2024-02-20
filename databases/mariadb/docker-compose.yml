@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   mariadb:
-    image: mariadb:11.2
+    image: mariadb-11.2:${PROJECT}
     container_name: ${PROJECT}
     ports:
       - "${PROJECT_PORT}:3306"

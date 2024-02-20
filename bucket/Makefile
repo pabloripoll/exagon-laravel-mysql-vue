@@ -45,7 +45,7 @@ system-check: ## shows this project ports availability on local machine
 	fi
 
 # -------------------------------------------------------------------------------------------------
-#  Docker
+#  Container
 # -------------------------------------------------------------------------------------------------
 .PHONY: env env-set
 
@@ -83,7 +83,7 @@ dev:
 up:
 	cd docker && $(DOCKER_COMPOSE) up -d
 	$(CURRENT_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)
-	echo $(DOCKER_PORT)
+	echo 127.0.0.1:$(DOCKER_PORT)
 
 container-ip:
 	$(CURRENT_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)

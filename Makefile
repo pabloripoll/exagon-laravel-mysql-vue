@@ -32,37 +32,17 @@ system-check: ## shows this project ports on local machine availability
 	echo ""
 	cd ./$(WEBAPP_DIR) && $(MAKE) system-check docker-env;
 	echo ""
-	echo "Checking configuration for "${C_YEL}"Web Service"${C_END}" Application:";
-	if [ -z "$$($(CURRENT_USER) lsof -i :$(WEBAPP_SERVICE_PORT))" ]; then \
-		echo ${C_BLU}"WEBAPP SERVICE"${C_END}" > port:"${C_GRN}"$(WEBAPP_SERVICE_PORT) is free to use."${C_END}; \
-    else \
-		echo ${C_BLU}"WEBAPP SERVICE"${C_END}" > port:"${C_RED}"$(WEBAPP_SERVICE_PORT) is busy. Update ./.env file."${C_END}; \
-	fi
-	cd ./$(WEBAPP_SERVICE_DIR) && $(MAKE) docker-enviroment;
+	cd ./$(WEBAPP_API_DIR) && $(MAKE) system-check docker-env;
 	echo ""
-	echo "Checking configuration for "${C_YEL}"Web Adminer"${C_END}" Application:";
-	if [ -z "$$($(CURRENT_USER) lsof -i :$(WEBADM_PORT))" ]; then \
-		echo ${C_BLU}"WEBADM"${C_END}" > port:"${C_GRN}"$(WEBADM_PORT) is free to use."${C_END}; \
-    else \
-		echo ${C_BLU}"WEBADM"${C_END}" > port:"${C_RED}"$(WEBADM_PORT) is busy. Update ./.env file."${C_END}; \
-	fi
-	cd ./$(WEBADM_DIR) && $(MAKE) docker-enviroment;
+	cd ./$(WEBAPP_DB_DIR) && $(MAKE) system-check docker-env;
 	echo ""
-	echo "Checking configuration for "${C_YEL}"Web Adminer Service"${C_END}" Application:";
-	if [ -z "$$($(CURRENT_USER) lsof -i :$(WEBADM_SERVICE_PORT))" ]; then \
-		echo ${C_BLU}"WEBADM SERVICE"${C_END}" > port:"${C_GRN}"$(WEBADM_SERVICE_PORT) is free to use."${C_END}; \
-    else \
-		echo ${C_BLU}"WEBADM SERVICE"${C_END}" > port:"${C_RED}"$(WEBADM_SERVICE_PORT) is busy. Update ./.env file."${C_END}; \
-	fi
-	cd ./$(WEBADM_SERVICE_DIR) && $(MAKE) docker-enviroment;
+	cd ./$(WEBADM_DIR) && $(MAKE) system-check docker-env;
 	echo ""
-	echo "Checking configuration for "${C_YEL}"MySQL Database"${C_END}":";
-	if [ -z "$$($(CURRENT_USER) lsof -i :$(MARIADB_DB_PORT))" ]; then \
-		echo ${C_BLU}"MYSQL DB"${C_END}" > port:"${C_GRN}"$(MARIADB_DB_PORT) is free to use."${C_END}; \
-    else \
-		echo ${C_BLU}"MYSQL DB"${C_END}" > port:"${C_RED}"$(MARIADB_DB_PORT) is busy. Update ./.env file."${C_END}; \
-	fi
-	cd ./$(MARIADB_DB_DIR) && $(MAKE) docker-enviroment;
+	cd ./$(WEBADM_API_DIR) && $(MAKE) system-check docker-env;
+	echo ""
+	cd ./$(WEBADM_DB_DIR) && $(MAKE) system-check docker-env;
+	echo ""
+	cd ./$(BUCKET_DIR) && $(MAKE) system-check docker-env;
 	echo ""
 
 # -------------------------------------------------------------------------------------------------
@@ -82,52 +62,81 @@ containers:
 # -------------------------------------------------------------------------------------------------
 #  Webapp
 # -------------------------------------------------------------------------------------------------
-.PHONY: webapp webapp-set
+.PHONY: webapp-ssh webapp-env webapp-create webapp-remove
+
+webapp-ssh:
+	cd ./$(REDIS_DB_DIR) && $(MAKE) ssh;
 
 webapp-env:
-	cd ./$(WEBAPP_DIR) && $(MAKE) docker-env-set;
+	cd ./$(REDIS_DB_DIR) && $(MAKE) docker-enviroment-set;
 
-webapp-install:
-	cd ./$(WEBAPP_DIR) && $(MAKE) build up dev;
+webapp-create:
+	cd ./$(REDIS_DB_DIR) && $(MAKE) build up dev;
 
-webapp-start:
-	cd ./$(WEBAPP_DIR) && $(MAKE) build dev;
+webapp-remove:
+	cd ./$(REDIS_DB_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
-#  Web ADMIN
+#  Web Application DB
 # -------------------------------------------------------------------------------------------------
-.PHONY: webadm-service webadm-service-set
+.PHONY: webapp-db-ssh webapp-db-env webapp-db-create webapp-db-remove
+
+webapp-db-ssh:
+	cd ./$(REDIS_DB_DIR) && $(MAKE) ssh;
+
+webapp-db-env:
+	cd ./$(REDIS_DB_DIR) && $(MAKE) docker-enviroment-set;
+
+webapp-db-create:
+	cd ./$(REDIS_DB_DIR) && $(MAKE) build up;
+
+webapp-db-remove:
+	cd ./$(REDIS_DB_DIR) && $(MAKE) stop clear;
+
+# -------------------------------------------------------------------------------------------------
+#  Web Back Office
+# -------------------------------------------------------------------------------------------------
+.PHONY: webadm-ssh webadm-env webadm-create webadm-remove
+
+webadm-ssh:
+	cd ./$(WEBADM_DIR) && $(MAKE) ssh;
 
 webadm-env:
 	cd ./$(WEBADM_DIR) && $(MAKE) docker-enviroment-set;
 
-webadm-build:
-	cd ./$(WEBADM_DIR) && $(MAKE) up dev;
+webadm-create:
+	cd ./$(WEBADM_DIR) && $(MAKE) build up;
 
-webadm-service:
-	cd ./$(WEBADM_SERVICE_DIR) && $(MAKE) up;
-
-webadm-service-set:
-	cd ./$(WEBADM_SERVICE_DIR) && $(MAKE) docker-enviroment-set;
+webadm-remove:
+	cd ./$(WEBADM_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
-#  MariaDB
+#  Web Back Office DB
 # -------------------------------------------------------------------------------------------------
-.PHONY: mariadb-service mariadb-service-set
+.PHONY: webadm-db-ssh webadm-db-env webadm-db-create webadm-db-remove
 
-mariadb-build:
-	cd ./$(MARIADB_DIR) && $(MAKE) up;
+webadm-db-ssh:
+	cd ./$(MARIADB_DB_DIR) && $(MAKE) ssh;
 
-mariadb-service-set:
-	cd ./$(MARIADB_DIR) && $(MAKE) docker-enviroment-set;
+webadm-db-env:
+	cd ./$(MARIADB_DB_DIR) && $(MAKE) docker-enviroment-set;
+
+webadm-db-create:
+	cd ./$(MARIADB_DB_DIR) && $(MAKE) build up;
+
+webadm-db-remove:
+	cd ./$(MARIADB_DB_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
 #  Bucket
 # -------------------------------------------------------------------------------------------------
-.PHONY: bucket-ssh bucket-create bucket-remove
+.PHONY: bucket-ssh bucket-env bucket-create bucket-remove
 
 bucket-ssh:
 	cd ./$(BUCKET_DIR) && $(MAKE) ssh;
+
+bucket-env:
+	cd ./$(BUCKET_DIR) && $(MAKE) docker-enviroment-set;
 
 bucket-create:
 	cd ./$(BUCKET_DIR) && $(MAKE) build up;
