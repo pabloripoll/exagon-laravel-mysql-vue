@@ -20,8 +20,7 @@ CURRENT_USER=sudo
 DOCKER_COMPOSE?=$(CURRENT_USER) docker compose
 DOCKER_COMPOSE_RUN=$(DOCKER_COMPOSE) run --rm
 DOCKER_EXEC_TOOLS_APP=$(CURRENT_USER) docker exec -it $(DOCKER_NAME) sh
-NODE_INSTALL="npm i"
-SERVER_RUN="npm run dev"
+COMPOSER_INSTALL="composer update"
 
 help: ## shows this Makefile help message
 	echo 'usage: make [target]'
@@ -76,7 +75,7 @@ build:
 	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
 
 install:
-	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(NODE_INSTALL)
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_INSTALL)
 
 dev:
 	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(SERVER_RUN)

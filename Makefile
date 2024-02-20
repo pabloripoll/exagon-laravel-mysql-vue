@@ -68,17 +68,16 @@ system-check: ## shows this project ports on local machine availability
 # -------------------------------------------------------------------------------------------------
 #  Docker
 # -------------------------------------------------------------------------------------------------
-.PHONY: docker containers
+.PHONY: images containers
 
-docker:
+images:
 	echo ${C_BLU}"DOCKER IMAGES"${C_END};
 	$(DOCKER) images
-	echo ${C_BLU}"DOCKER CONTAINERS"${C_END};
-	$(DOCKER) ps
+	echo ${C_YEL}"Remove any image if container is down by $$ $(DOCKER) image rm -f {IMAGE ID}"${C_END};
 
 containers:
 	echo ${C_BLU}"DOCKER CONTAINERS"${C_END};
-	$(DOCKER) ps
+	$(DOCKER) ps -a
 
 # -------------------------------------------------------------------------------------------------
 #  Webapp
