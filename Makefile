@@ -205,13 +205,13 @@ bucket-remove:
 .PHONY: eshop-create eshop-remove backoffice-create backoffice-remove
 
 eshop-create:
-	webapp-env-set webapp-db-env-set webapp-api-env-set;
+	$(MAKE) webapp-env-set webapp-db-env-set webapp-api-env-set;
 
 eshop-remove:
 	echo "none";
 
 admin-create:
-	bucket-env-set webadm-env-set webadm-db-env-set webadm-api-env-set;
+	$(MAKE) bucket-env-set webadm-env-set webadm-db-env-set webadm-api-env-set;
 
 admin-remove:
 	echo "none";

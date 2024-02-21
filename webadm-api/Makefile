@@ -50,20 +50,6 @@ host-check: ## shows this project ports availability on local machine
 # -------------------------------------------------------------------------------------------------
 .PHONY: env env-set
 
-env: ## checks if docker .env file exists
-	if [ -f ./docker/.env ]; then \
-		echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"is set."${C_END}; \
-    else \
-		echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}${C_YEL}" is not set."${C_END}" \
-	Create it from root dir by "${C_YEL}"$$ make $(shell echo $(DOCKER_ABBR) | tr A-Z a-z)-env-set"${C_END}" \
-	or from ./$(DIR_BASENAME)/ by "${C_YEL}"$$ make env-set"${C_END}; \
-	fi
-
-env-set: ## sets docker .env file
-	echo "PROJECT=$(DOCKER_NAME)\
-	\nPROJECT_PORT=$(DOCKER_PORT)" > ./docker/.env;
-	echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END}; \
-
 LARAVEL_ENVIROMENT="./.env"
 env-laravel: ## raplace any value of laravel .env file - $(s~^.*#)
 	if [ -f ${LARAVEL_ENVIROMENT} ]; then \
@@ -76,6 +62,21 @@ env-laravel: ## raplace any value of laravel .env file - $(s~^.*#)
     else \
 		echo ${C_RED}"Laravel enviroment cannot be found"${C_END}; \
 	fi
+
+env: ## checks if docker .env file exists
+	if [ -f ./docker/.env ]; then \
+		echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"is set."${C_END}; \
+    else \
+		echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}${C_YEL}" is not set."${C_END}" \
+	Create it from root dir by "${C_YEL}"$$ make $(shell echo $(DOCKER_ABBR) | tr A-Z a-z)-env-set"${C_END}" \
+	or from ./$(DIR_BASENAME)/ by "${C_YEL}"$$ make env-set"${C_END}; \
+	fi
+
+env-set: ## sets docker .env file
+	echo "PROJECT=$(DOCKER_NAME)\
+	\nPROJECT_PORT=$(DOCKER_PORT)" > ./docker/.env; \
+    $(MAKE) env-laravel;
+	echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END}; \
 
 # -------------------------------------------------------------------------------------------------
 #  Container
