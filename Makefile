@@ -206,15 +206,17 @@ bucket-remove:
 
 eshop-create:
 	$(MAKE) webapp-env-set webapp-db-env-set webapp-api-env-set;
+	$(MAKE) webapp-create webapp-db-create webapp-api-create;
 
 eshop-remove:
 	echo "none";
 
 admin-create:
 	$(MAKE) bucket-env-set webadm-env-set webadm-db-env-set webadm-api-env-set;
+	$(MAKE) bucket-create webadm-create webadm-db-create webadm-api-create;
 
 admin-remove:
-	echo "none";
+	$(MAKE) bucket-remove webadm-remove webadm-db-remove webadm-api-remove;
 
 # -------------------------------------------------------------------------------------------------
 #  Repository
