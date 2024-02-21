@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   mariadb:
-    image: mariadb:10.3
+    image: mariadb:10.11
     container_name: ${PROJECT}
     ports:
       - "${PROJECT_PORT}:3306"
@@ -14,14 +14,9 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    healthcheck:
-      test: ["CMD-SHELL", "systemctl status mariadb || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
     volumes:
       - data:/var/lib/mysql
-      - ./dev/mariadb:/docker-entrypoint-initdb.d
+      - ~/mysql-data:/docker-entrypoint-initdb.d
 
 volumes:
     data:

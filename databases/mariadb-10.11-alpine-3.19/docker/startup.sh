@@ -1,15 +1,22 @@
 #!/bin/sh
 
 # parameters
-MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-"mysql"}
+MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-""}
 MYSQL_DATABASE=${MYSQL_DATABASE:-""}
 MYSQL_USER=${MYSQL_USER:-""}
 MYSQL_PASSWORD=${MYSQL_PASSWORD:-""}
+
+echo "[i] MySQL root password: $MYSQL_ROOT_PASSWORD"
+echo "[i] MySQL database: $MYSQL_DATABASE"
+echo "[i] MySQL user: $MYSQL_USER"
+echo "[i] MySQL password: $MYSQL_PASSWORD"
 
 if [ ! -d "/run/mysqld" ]; then
 	mkdir -p /run/mysqld
 	chown -R mysql:mysql /run/mysqld
 fi
+
+rm /var/lib/mysql/mysql
 
 if [ -d /var/lib/mysql/mysql ]; then
 	echo '[i] MySQL directory already present, skipping creation'
@@ -23,7 +30,7 @@ else
 	mysql_install_db --user=mysql --ldata=/var/lib/mysql > /dev/null
 	echo 'Database initialized'
 
-	echo "[i] MySql root password: $MYSQL_ROOT_PASSWORD"
+	echo "[i] MySQL root password: $MYSQL_ROOT_PASSWORD"
 
 	# create temp file
 	tfile=`mktemp`
@@ -40,7 +47,6 @@ DELETE FROM mysql.user;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%' IDENTIFIED BY '$MYSQL_ROOT_PASSWORD' WITH GRANT OPTION;
 EOF
-
 
 	# Create new database
 	if [ "$MYSQL_DATABASE" != "" ]; then
@@ -69,7 +75,9 @@ EOF
 fi
 
 echo "[i] Sleeping 5 sec"
+
 sleep 5
 
 echo '[i] start running mysqld'
+
 exec /usr/bin/mysqld --user=mysql --console --skip-networking=0

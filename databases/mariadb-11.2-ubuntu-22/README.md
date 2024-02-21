@@ -1,4 +1,4 @@
-# MariaDB
+# MariaDB 11.2 - Ubuntu 22.04
 
 ```bash
 $ mariadb --version
@@ -21,5 +21,11 @@ SUPPORT_URL="https://help.ubuntu.com/"
 BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
 PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
 UBUNTU_CODENAME=jammy
+```
+
+```bash
+$ sudo docker images
+REPOSITORY   TAG       IMAGE ID       CREATED      SIZE
+mariadb      11.2      2f62d6fb2c8b   9 days ago   405MB
 ```
 
