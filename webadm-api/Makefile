@@ -62,7 +62,20 @@ env: ## checks if docker .env file exists
 env-set: ## sets docker .env file
 	echo "PROJECT=$(DOCKER_NAME)\
 	\nPROJECT_PORT=$(DOCKER_PORT)" > ./docker/.env;
-	echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END};
+	echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END}; \
+
+LARAVEL_ENVIROMENT="./.env"
+env-laravel: ## raplace any value of laravel .env file - $(s~^.*#)
+	if [ -f ${LARAVEL_ENVIROMENT} ]; then \
+        $(shell sed -i "s/DB_PORT=[0-9\"]\+/DB_PORT=$(WEBADM_DB_PORT)/g" ${LARAVEL_ENVIROMENT}) \
+        $(shell sed -i "s/DB_DATABASE=[A-Za-z0-9\"]\{1,\}/DB_DATABASE=$(WEBADM_DB_NAME)/g" ${LARAVEL_ENVIROMENT}) \
+        $(shell sed -i "s/DB_USERNAME=[A-Za-z0-9\"]\{1,\}/DB_USERNAME=$(WEBADM_DB_USER)/g" ${LARAVEL_ENVIROMENT}) \
+        $(shell sed -i "s/DB_PASSWORD=[^ ]*/DB_PASSWORD=\"$(WEBADM_DB_PASS)\"/g" ${LARAVEL_ENVIROMENT}) \
+		echo ${C_GRN}"Laravel enviroment file has been updated"${C_END}; \
+		echo ${C_YEL}"Checkout if it is correct before continue"${C_END}; \
+    else \
+		echo ${C_RED}"Laravel enviroment cannot be found"${C_END}; \
+	fi
 
 # -------------------------------------------------------------------------------------------------
 #  Container
