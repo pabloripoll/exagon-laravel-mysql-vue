@@ -1,8 +1,9 @@
 version: "3.8"
 
 services:
-  node:
+  webadm:
     image: node-21.6:alpine-3.19
+    pull_policy: never
     build:
       context: ./
       dockerfile: Dockerfile

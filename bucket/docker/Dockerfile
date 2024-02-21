@@ -15,6 +15,7 @@ RUN apk add --no-cache \
   supervisor \
   ## PHP extensions
   php83 \
+  php83-cli \
   php83-ctype \
   php83-curl \
   php83-dom \
@@ -28,12 +29,17 @@ RUN apk add --no-cache \
   php83-phar \
   php83-session \
   php83-tokenizer \
+  php83-soap \
   php83-xml \
   php83-xmlreader \
-  php83-xmlwriter
+  php83-xmlwriter \
+  php83-zip \
   # Database
-  #php83-mysqli \
-  #php83-redis\
+  php83-sqlite3 \
+  php83-mysqli \
+  php83-pgsql \
+  php83-mongodb \
+  php83-redis
 
 # PHP Composer
 RUN wget https://getcomposer.org/installer -O composer-setup.php && \
@@ -71,6 +77,3 @@ EXPOSE 80
 
 # Let supervisord start nginx & php-fpm
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/supervisord.conf"]
-
-# Configure a healthcheck to validate that everything is up&running
-#HEALTHCHECK --timeout=10s CMD curl --silent --fail http://127.0.0.1:8080/fpm-ping || exit 1

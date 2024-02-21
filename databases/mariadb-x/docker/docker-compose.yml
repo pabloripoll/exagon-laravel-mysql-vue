@@ -3,6 +3,7 @@ version: "3.8"
 services:
   mariadb:
     image: lscr.io/linuxserver/mariadb:latest
+    pull_policy: never
     container_name: ${PROJECT}
     ports:
       - "${PROJECT_PORT}:3306"

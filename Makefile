@@ -212,7 +212,6 @@ eshop-remove:
 	echo "none";
 
 admin-create:
-	$(MAKE) bucket-env-set webadm-env-set webadm-db-env-set webadm-api-env-set;
 	$(MAKE) bucket-create webadm-create webadm-db-create webadm-api-create;
 
 admin-remove:
