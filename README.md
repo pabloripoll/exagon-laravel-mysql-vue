@@ -4,7 +4,7 @@
 
 Distributed system for an commerce
 
-- eCommerce shop
+- eShop
 ```
 .
 ├── file0
@@ -14,7 +14,7 @@ Distributed system for an commerce
     └── file1
 ```
 
-- Backoffice ERP
+- Backoffice Admin
 ```
 .
 ├── file0

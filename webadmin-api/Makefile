@@ -10,10 +10,10 @@ C_END='\033[0m'
 
 include ../.env
 
-DOCKER_ABBR="WEBADM_API"
+DOCKER_ABBR="WEBADMIN_API"
 DOCKER_HOST=$(HOSTNAME)
-DOCKER_PORT=$(WEBADM_API_PORT)
-DOCKER_NAME=$(PROJECT)$(WEBADM_API_PROJECT)$(PROJECT_CODE)
+DOCKER_PORT=$(WEBADMIN_API_PORT)
+DOCKER_NAME=$(PROJECT)$(WEBADMIN_API_PROJECT)$(PROJECT_CODE)
 
 CURRENT_DIR=$(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 DIR_BASENAME=$(shell basename $(CURRENT_DIR))
@@ -55,10 +55,10 @@ LARAVEL_ENVIROMENT="./.env"
 env-laravel: ## raplace any value of laravel .env file - $(s~^.*#)
 	if [ -f ${LARAVEL_ENVIROMENT} ]; then \
         $(shell sed -i "s/DB_HOST=[^ ]*/DB_HOST=$(DOCKER_HOST)/g" ${LARAVEL_ENVIROMENT}) \
-        $(shell sed -i "s/DB_PORT=[0-9\"]\+/DB_PORT=$(WEBADM_DB_PORT)/g" ${LARAVEL_ENVIROMENT}) \
-        $(shell sed -i "s/DB_DATABASE=[A-Za-z0-9\"]\{1,\}/DB_DATABASE=$(WEBADM_DB_NAME)/g" ${LARAVEL_ENVIROMENT}) \
-        $(shell sed -i "s/DB_USERNAME=[A-Za-z0-9\"]\{1,\}/DB_USERNAME=$(WEBADM_DB_USER)/g" ${LARAVEL_ENVIROMENT}) \
-        $(shell sed -i "s/DB_PASSWORD=[^ ]*/DB_PASSWORD=\"$(WEBADM_DB_PASS)\"/g" ${LARAVEL_ENVIROMENT}) \
+        $(shell sed -i "s/DB_PORT=[0-9\"]\+/DB_PORT=$(WEBADMIN_DB_PORT)/g" ${LARAVEL_ENVIROMENT}) \
+        $(shell sed -i "s/DB_DATABASE=[A-Za-z0-9\"]\{1,\}/DB_DATABASE=$(WEBADMIN_DB_NAME)/g" ${LARAVEL_ENVIROMENT}) \
+        $(shell sed -i "s/DB_USERNAME=[A-Za-z0-9\"]\{1,\}/DB_USERNAME=$(WEBADMIN_DB_USER)/g" ${LARAVEL_ENVIROMENT}) \
+        $(shell sed -i "s/DB_PASSWORD=[^ ]*/DB_PASSWORD=\"$(WEBADMIN_DB_PASS)\"/g" ${LARAVEL_ENVIROMENT}) \
 		echo ${C_GRN}"Laravel enviroment file has been updated"${C_END}; \
 		echo ${C_YEL}"Checkout if it is correct before continue"${C_END}; \
     else \

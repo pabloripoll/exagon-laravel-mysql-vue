@@ -10,10 +10,10 @@ C_END='\033[0m'
 
 include ../../.env
 
-DOCKER_ABBR="WEBADM_DB"
+DOCKER_ABBR="WEBADMIN_DB"
 DOCKER_HOST=$(HOSTNAME)
-DOCKER_PORT=$(WEBADM_DB_PORT)
-DOCKER_NAME=$(PROJECT)$(WEBADM_DB_PROJECT)$(PROJECT_CODE)
+DOCKER_PORT=$(WEBADMIN_DB_PORT)
+DOCKER_NAME=$(PROJECT)$(WEBADMIN_DB_PROJECT)$(PROJECT_CODE)
 
 CURRENT_DIR=$(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 DIR_BASENAME=$(shell basename $(CURRENT_DIR))
@@ -61,10 +61,10 @@ env: ## checks if docker .env file exists
 env-set:
 	echo "COMPOSE_PROJECT_NAME=$(DOCKER_NAME)\
 	\nCOMPOSE_PROJECT_PORT=$(DOCKER_PORT)\
-	\nMYSQL_ROOT_PASSWORD=\"$(WEBADM_DB_ROOT)\"\
-	\nMYSQL_DATABASE=$(WEBADM_DB_NAME)\
-	\nMYSQL_USER=$(WEBADM_DB_USER)\
-	\nMYSQL_PASSWORD=\"$(WEBADM_DB_PASS)\""> ./docker/.env;
+	\nMYSQL_ROOT_PASSWORD=\"$(WEBADMIN_DB_ROOT)\"\
+	\nMYSQL_DATABASE=$(WEBADMIN_DB_NAME)\
+	\nMYSQL_USER=$(WEBADMIN_DB_USER)\
+	\nMYSQL_PASSWORD=\"$(WEBADMIN_DB_PASS)\""> ./docker/.env;
 	echo $(C_BLU)"$(DOCKER_ABBR) DOCKER ENV"$(C_END)" file "$(C_GRN)"has been set."$(C_END);
 
 # -------------------------------------------------------------------------------------------------

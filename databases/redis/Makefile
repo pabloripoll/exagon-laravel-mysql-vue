@@ -10,10 +10,10 @@ C_END='\033[0m'
 
 include ../../.env
 
-DOCKER_ABBR="WEBAPP_DB"
+DOCKER_ABBR="WEBSHOP_DB"
 DOCKER_HOST=$(HOSTNAME)
-DOCKER_PORT=$(WEBAPP_DB_PORT)
-DOCKER_NAME=$(PROJECT)$(WEBAPP_DB_PROJECT)$(PROJECT_CODE)
+DOCKER_PORT=$(WEBSHOP_DB_PORT)
+DOCKER_NAME=$(PROJECT)$(WEBSHOP_DB_PROJECT)$(PROJECT_CODE)
 
 CURRENT_DIR=$(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 DIR_BASENAME=$(shell basename $(CURRENT_DIR))
@@ -61,7 +61,7 @@ env: ## checks if docker .env file exists
 env-set: ## sets docker .env file
 	echo "COMPOSE_PROJECT_NAME=$(DOCKER_NAME)\
 	\nCOMPOSE_PROJECT_PORT=$(DOCKER_PORT)\
-	\nDB_PASSWORD=\"$(WEBAPP_DB_PASS)\"" > ./docker/.env;
+	\nDB_PASSWORD=\"$(WEBSHOP_DB_PASS)\"" > ./docker/.env;
 	echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END};
 
 # -------------------------------------------------------------------------------------------------

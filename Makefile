@@ -33,17 +33,17 @@ system-check: ## shows this project ports on local machine availability
 	$(DOCKER) --version
 	$(DOCKER_COMPOSE) version
 	echo "";
-	cd ./$(WEBAPP_DIR) && $(MAKE) host-check env;
+	cd ./$(WEBSHOP_DIR) && $(MAKE) host-check env;
 	echo "";
-	cd ./$(WEBAPP_API_DIR) && $(MAKE) host-check env;
+	cd ./$(WEBSHOP_API_DIR) && $(MAKE) host-check env;
 	echo "";
-	cd ./$(WEBAPP_DB_DIR) && $(MAKE) host-check env;
+	cd ./$(WEBSHOP_DB_DIR) && $(MAKE) host-check env;
 	echo "";
-	cd ./$(WEBADM_DIR) && $(MAKE) host-check env;
+	cd ./$(WEBADMIN_DIR) && $(MAKE) host-check env;
 	echo "";
-	cd ./$(WEBADM_API_DIR) && $(MAKE) host-check env;
+	cd ./$(WEBADMIN_API_DIR) && $(MAKE) host-check env;
 	echo "";
-	cd ./$(WEBADM_DB_DIR) && $(MAKE) host-check env;
+	cd ./$(WEBADMIN_DB_DIR) && $(MAKE) host-check env;
 	echo "";
 	cd ./$(BUCKET_DIR) && $(MAKE) host-check env;
 	echo "";
@@ -65,122 +65,122 @@ containers:
 # -------------------------------------------------------------------------------------------------
 #  Webapp
 # -------------------------------------------------------------------------------------------------
-.PHONY: webapp-ssh webapp-env webapp-env-set webapp-create webapp-remove
+.PHONY: webshop-ssh webshop-env webshop-env-set webshop-create webshop-remove
 
-webapp-ssh:
-	cd ./$(WEBAPP_DIR) && $(MAKE) ssh;
+webshop-ssh:
+	cd ./$(WEBSHOP_DIR) && $(MAKE) ssh;
 
-webapp-env:
-	cd ./$(WEBAPP_DIR) && $(MAKE) env;
+webshop-env:
+	cd ./$(WEBSHOP_DIR) && $(MAKE) env;
 
-webapp-env-set:
-	cd ./$(WEBAPP_DIR) && $(MAKE) env-set;
+webshop-env-set:
+	cd ./$(WEBSHOP_DIR) && $(MAKE) env-set;
 
-webapp-create:
-	cd ./$(WEBAPP_DIR) && $(MAKE) build up dev;
+webshop-create:
+	cd ./$(WEBSHOP_DIR) && $(MAKE) build up dev;
 
-webapp-remove:
-	cd ./$(WEBAPP_DIR) && $(MAKE) stop clear;
+webshop-remove:
+	cd ./$(WEBSHOP_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
 #  Webapp API
 # -------------------------------------------------------------------------------------------------
-.PHONY: webapp-api-ssh webapp-api-env webapp-api-env-set webapp-api-create webapp-api-remove
+.PHONY: webshop-api-ssh webshop-api-env webshop-api-env-set webshop-api-create webshop-api-remove
 
-webapp-api-ssh:
-	cd ./$(WEBAPP_API_DIR) && $(MAKE) ssh;
+webshop-api-ssh:
+	cd ./$(WEBSHOP_API_DIR) && $(MAKE) ssh;
 
-webapp-api-env:
-	cd ./$(WEBAPP_API_DIR) && $(MAKE) env;
+webshop-api-env:
+	cd ./$(WEBSHOP_API_DIR) && $(MAKE) env;
 
-webapp-api-env-set:
-	cd ./$(WEBAPP_DIR) && $(MAKE) env-set;
+webshop-api-env-set:
+	cd ./$(WEBSHOP_DIR) && $(MAKE) env-set;
 
-webapp-api-create:
-	cd ./$(WEBAPP_API_DIR) && $(MAKE) build up dev;
+webshop-api-create:
+	cd ./$(WEBSHOP_API_DIR) && $(MAKE) build up dev;
 
-webapp-api-remove:
-	cd ./$(WEBAPP_API_DIR) && $(MAKE) stop clear;
+webshop-api-remove:
+	cd ./$(WEBSHOP_API_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
 #  Webapp DB
 # -------------------------------------------------------------------------------------------------
-.PHONY: webapp-db-ssh webapp-db-env webapp-db-create webapp-db-remove
+.PHONY: webshop-db-ssh webshop-db-env webshop-db-create webshop-db-remove
 
-webapp-db-ssh:
-	cd ./$(WEBAPP_DB_DIR) && $(MAKE) ssh;
+webshop-db-ssh:
+	cd ./$(WEBSHOP_DB_DIR) && $(MAKE) ssh;
 
-webapp-db-env:
-	cd ./$(WEBAPP_DB_DIR) && $(MAKE) env;
+webshop-db-env:
+	cd ./$(WEBSHOP_DB_DIR) && $(MAKE) env;
 
-webapp-db-env-set:
-	cd ./$(WEBAPP_DIR) && $(MAKE) env-set;
+webshop-db-env-set:
+	cd ./$(WEBSHOP_DIR) && $(MAKE) env-set;
 
-webapp-db-create:
-	cd ./$(WEBAPP_DB_DIR) && $(MAKE) build up;
+webshop-db-create:
+	cd ./$(WEBSHOP_DB_DIR) && $(MAKE) build up;
 
-webapp-db-remove:
-	cd ./$(WEBAPP_DB_DIR) && $(MAKE) stop clear;
+webshop-db-remove:
+	cd ./$(WEBSHOP_DB_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
 #  Backoffice
 # -------------------------------------------------------------------------------------------------
-.PHONY: webadm-ssh webadm-env webadm-env-set webadm-create webadm-remove
+.PHONY: webadmin-ssh webadmin-env webadmin-env-set webadmin-create webadmin-remove
 
-webadm-ssh:
-	cd ./$(WEBADM_DIR) && $(MAKE) ssh;
+webadmin-ssh:
+	cd ./$(WEBADMIN_DIR) && $(MAKE) ssh;
 
-webadm-env:
-	cd ./$(WEBADM_DIR) && $(MAKE) env;
+webadmin-env:
+	cd ./$(WEBADMIN_DIR) && $(MAKE) env;
 
-webadm-env-set:
-	cd ./$(WEBADM_DIR) && $(MAKE) env-set;
+webadmin-env-set:
+	cd ./$(WEBADMIN_DIR) && $(MAKE) env-set;
 
-webadm-create:
-	cd ./$(WEBADM_DIR) && $(MAKE) build up;
+webadmin-create:
+	cd ./$(WEBADMIN_DIR) && $(MAKE) build up;
 
-webadm-remove:
-	cd ./$(WEBADM_DIR) && $(MAKE) stop clear;
+webadmin-remove:
+	cd ./$(WEBADMIN_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
 #  Backoffice API
 # -------------------------------------------------------------------------------------------------
-.PHONY: webadm-api-ssh webadm-api-env webadm-api-env-set webadm-api-create webadm-api-remove
+.PHONY: webadmin-api-ssh webadmin-api-env webadmin-api-env-set webadmin-api-create webadmin-api-remove
 
-webadm-api-ssh:
-	cd ./$(WEBADM_API_DIR) && $(MAKE) ssh;
+webadmin-api-ssh:
+	cd ./$(WEBADMIN_API_DIR) && $(MAKE) ssh;
 
-webadm-api-env:
-	cd ./$(WEBADM_API_DIR) && $(MAKE) env;
+webadmin-api-env:
+	cd ./$(WEBADMIN_API_DIR) && $(MAKE) env;
 
-webadm-api-env-set:
-	cd ./$(WEBADM_API_DIR) && $(MAKE) env-set;
+webadmin-api-env-set:
+	cd ./$(WEBADMIN_API_DIR) && $(MAKE) env-set;
 
-webadm-api-create:
-	cd ./$(WEBADM_API_DIR) && $(MAKE) build up;
+webadmin-api-create:
+	cd ./$(WEBADMIN_API_DIR) && $(MAKE) build up;
 
-webadm-api-remove:
-	cd ./$(WEBADM_API_DIR) && $(MAKE) stop clear;
+webadmin-api-remove:
+	cd ./$(WEBADMIN_API_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
 # Backoffice DB
 # -------------------------------------------------------------------------------------------------
-.PHONY: webadm-db-ssh webadm-db-env webadm-db-env-set webadm-db-create webadm-db-remove
+.PHONY: webadmin-db-ssh webadmin-db-env webadmin-db-env-set webadmin-db-create webadmin-db-remove
 
-webadm-db-ssh:
-	cd ./$(WEBADM_DB_DIR) && $(MAKE) ssh;
+webadmin-db-ssh:
+	cd ./$(WEBADMIN_DB_DIR) && $(MAKE) ssh;
 
-webadm-db-env:
-	cd ./$(WEBADM_DB_DIR) && $(MAKE) env;
+webadmin-db-env:
+	cd ./$(WEBADMIN_DB_DIR) && $(MAKE) env;
 
-webadm-db-env-set:
-	cd ./$(WEBADM_DB_DIR) && $(MAKE) env-set;
+webadmin-db-env-set:
+	cd ./$(WEBADMIN_DB_DIR) && $(MAKE) env-set;
 
-webadm-db-create:
-	cd ./$(WEBADM_DB_DIR) && $(MAKE) build up;
+webadmin-db-create:
+	cd ./$(WEBADMIN_DB_DIR) && $(MAKE) build up;
 
-webadm-db-remove:
-	cd ./$(WEBADM_DB_DIR) && $(MAKE) stop clear;
+webadmin-db-remove:
+	cd ./$(WEBADMIN_DB_DIR) && $(MAKE) stop clear;
 
 # -------------------------------------------------------------------------------------------------
 #  Bucket
@@ -208,17 +208,17 @@ bucket-remove:
 .PHONY: eshop-create eshop-remove backoffice-create backoffice-remove
 
 eshop-create:
-	$(MAKE) webapp-env-set webapp-db-env-set webapp-api-env-set;
-	$(MAKE) webapp-create webapp-db-create webapp-api-create;
+	$(MAKE) webshop-env-set webshop-db-env-set webshop-api-env-set;
+	$(MAKE) webshop-create webshop-db-create webshop-api-create;
 
 eshop-remove:
-	echo "none";
+	$(MAKE) webshop-remove webshop-db-remove webshop-api-remove;
 
 admin-create:
-	$(MAKE) bucket-env-set webadm-env-set webadm-db-env-set webadm-api-env-set;
+	$(MAKE) bucket-env-set webadmin-env-set webadmin-db-env-set webadmin-api-env-set;
 
 admin-remove:
-	$(MAKE) webadm-db-remove webadm-api-remove;
+	$(MAKE) bucket-remove webadmin-remove webadmin-db-remove webadmin-api-remove;
 
 # -------------------------------------------------------------------------------------------------
 #  Repository
