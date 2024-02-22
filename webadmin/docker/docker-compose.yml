@@ -7,10 +7,10 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    container_name: ${PROJECT}
+    container_name: ${COMPOSE_PROJECT_NAME}
     entrypoint: /bin/sh
     ports:
-      - ${PROJECT_PORT}:8000
+      - ${COMPOSE_PROJECT_PORT}:8000
     working_dir: /srv/app
     volumes:
       - type: bind
