@@ -220,7 +220,7 @@ admin-set:
 	$(MAKE) bucket-env-set webadmin-db-env-set webadmin-api-env-set webadmin-env-set;
 
 admin-create:
-	$(MAKE) bucket-create webadmin-db-create;
+	$(MAKE) bucket-create webadmin-db-create webadmin-api-remove webadmin-remove;
 
 admin-remove:
 	$(MAKE) bucket-remove webadmin-db-remove webadmin-api-remove webadmin-remove;
