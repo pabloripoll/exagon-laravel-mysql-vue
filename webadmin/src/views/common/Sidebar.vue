@@ -9,37 +9,55 @@
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column nav-flat nav-compact text-sm" data-widget="treeview" role="menu" id="sidebar-menu" data-accordion="false">
 
-                    <li class="nav-header">DESKTOP</li>
+                    <li class="nav-header"><i class="nav-icon fas fa-store"></i> &nbsp; E-SHOP</li>
                     <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                        <router-link to="/eshop/dashboard" class="nav-link">
+                            <i class="nav-icon fas fa-chart-line"></i>
+                            <p>Dashboard</p>
+                        </router-link>
+                        <router-link to="/eshop/sales" class="nav-link">
+                            <i class="nav-icon fas fa-shopping-cart"></i>
+                            <p>Sales</p>
+                        </router-link>
+                        <router-link to="/eshop/products" class="nav-link">
+                            <i class="nav-icon fas fa-gift"></i>
+                            <p>Products</p>
+                        </router-link>
+                    </li>
+
+                    <li class="nav-header"><i class="nav-icon fas fa-cubes"></i> &nbsp; CATALOGUE</li>
+                    <li class="nav-item">
+                        <router-link to="/catalogue/products" class="nav-link">
+                            <i class="nav-icon fas fa-cube"></i>
+                            <p>Products</p>
+                        </router-link>
+                        <router-link to="/catalogue/categories" class="nav-link">
+                            <i class="nav-icon fas fa-sitemap"></i>
+                            <p>Categories</p>
+                        </router-link>
+                        <router-link to="/catalogue/brands" class="nav-link">
+                            <i class="nav-icon fas fa-copyright"></i>
+                            <p>Brands</p>
+                        </router-link>
+                    </li>
+                    <!-- <li class="nav-header"><i class="nav-icon fas fa-store"></i> E-SHOP</li>
+                    <li class="nav-item">
+                        <router-link to="/eshop/dashboard" class="nav-link">
+                            <i class="nav-icon fas fa-chart-line"></i>
                             <p>
                                 Dashboard
                                 <i class="right fas fa-angle-left"></i>
                             </p>
-                        </a>
+                        </router-link>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="/dashboard/index" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Dashboard v1</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/dashboard/index2" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Dashboard v2</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="/dashboard/index3" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Dashboard v3</p>
-                                </a>
+                                <router-link to="/eshop/dashboard" class="nav-link">
+                                    <i class="nav-icon fas fa-window-minimize"></i>
+                                    <p>statistics</p>
+                                </router-link>
                             </li>
                         </ul>
-                    </li>
-
+                    </li> -->
                 </ul>
             </nav>
         </div>
