@@ -2,7 +2,7 @@ version: "3.8"
 
 services:
   bucket:
-    image: php-8.3:alpine-3.19
+    image: bucket:php-8.3-alpine-3.19
     pull_policy: never
     build:
       context: ./

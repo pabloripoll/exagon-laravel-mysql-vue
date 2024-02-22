@@ -1,8 +1,8 @@
 version: "3.8"
 
 services:
-  webadm:
-    image: node-21.6:alpine-3.19
+  webadmin:
+    image: admin-vue:node-21.6-alpine-3.19
     pull_policy: never
     build:
       context: ./

@@ -13,7 +13,7 @@ export default defineConfig(({ command, mode }) => {
         },
         server: {
             host: true,
-            port: parseInt(env.PROJECT_PORT),
+            port: parseInt(env.COMPOSE_PROJECT_PORT),
         }
     }
 })
