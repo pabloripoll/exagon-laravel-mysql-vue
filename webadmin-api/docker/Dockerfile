@@ -3,18 +3,33 @@ ARG ALPINE_VERSION=3.19
 FROM alpine:${ALPINE_VERSION}
 FROM php:8.3-fpm-alpine
 
-# Setup document root
+# Setup unique user and group - needs bash
+RUN apk add --no-cache bash
+
+ARG UID
+ARG GID
+ENV UID=${UID}
+ENV GID=${GID}
+
+RUN addgroup -g ${GID} --system docker
+RUN adduser -G docker --system -D -s /bin/sh -u ${UID} docker
+
+# Create project root
+RUN mkdir -p /var/www/html
+
 WORKDIR /var/www/html
 
-# Install packages and remove default server definition
-ENV PHP_V="php83"
-
+# Install main packages and remove default server definition
 RUN apk add --no-cache \
   curl \
   wget \
   nginx \
-  supervisor \
-  ## PHP extensions
+  supervisor
+
+# Install PHP and its extensions packages and remove default server definition
+ENV PHP_V="php83"
+
+RUN apk add --no-cache \
   ${PHP_V} \
   ${PHP_V}-cli \
   ${PHP_V}-ctype \
@@ -60,7 +75,7 @@ COPY config/php.ini /etc/${PHP_V}/conf.d/custom.ini
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Make sure files/folders needed by the processes are accessable when they run under the nobody user
-RUN chown -R nobody.nobody /var/www/html /run /var/lib/nginx /var/log/nginx
+RUN chown -R docker.docker /var/www/html /run /var/lib/nginx /var/log/nginx
 
 # PHP Docker
 RUN docker-php-ext-install pdo pdo_mysql
@@ -73,10 +88,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 RUN ln -s /usr/bin/${PHP_V} /usr/bin/php
 
 # Switch to use a non-root user from here on
-USER nobody
+USER docker
 
 # Add application
-COPY --chown=nobody ../ /var/www/html/
+COPY --chown=docker.docker ../ /var/www/html/
 
 # Expose the port nginx is reachable on
 EXPOSE 80
