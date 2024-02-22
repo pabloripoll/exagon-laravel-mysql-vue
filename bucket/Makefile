@@ -69,25 +69,6 @@ env-set: ## sets docker .env file
 # -------------------------------------------------------------------------------------------------
 #  Container
 # -------------------------------------------------------------------------------------------------
-.PHONY: env env-set
-
-env: ## checks if docker .env file exists
-	if [ -f ./docker/.env ]; then \
-		echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"is set."${C_END}; \
-    else \
-		echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}${C_YEL}" is not set."${C_END}" \
-	Create it from root dir by "${C_YEL}"$$ make $(shell echo $(DOCKER_ABBR) | tr A-Z a-z)-env-set"${C_END}" \
-	or from ./$(DIR_BASENAME)/ by "${C_YEL}"$$ make env-set"${C_END}; \
-	fi
-
-env-set: ## sets docker .env file
-	echo "PROJECT=$(DOCKER_NAME)\
-	\nPROJECT_PORT=$(DOCKER_PORT)" > ./docker/.env;
-	echo ${C_BLU}"BUCKET DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END};
-
-#
-# Commands
-#
 .PHONY: ssh build install dev up start first stop restart clear
 
 ssh:
