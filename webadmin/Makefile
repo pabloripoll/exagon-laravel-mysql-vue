@@ -79,7 +79,7 @@ build:
 	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
 
 install:
-	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(COMPOSER_INSTALL)
+	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(NODE_INSTALL)
 
 dev:
 	cd docker && $(DOCKER_EXEC_TOOLS_APP) -c $(SERVER_RUN)
@@ -94,17 +94,17 @@ container-ip:
 	echo $(DOCKER_PORT)
 
 start:
-	up dev
+	$(MAKE) up dev
 
 first:
-	build install dev
+	$(MAKE) build install dev
 
 stop:
 	cd docker && $(DOCKER_COMPOSE) kill || true
 	cd docker && $(DOCKER_COMPOSE) rm --force || true
 
 restart:
-	stop start dev
+	$(MAKE) stop start dev
 
 clear:
 	cd docker && $(DOCKER_COMPOSE) down -v --remove-orphans || true
