@@ -205,20 +205,25 @@ bucket-remove:
 # -------------------------------------------------------------------------------------------------
 #  PROJECT
 # -------------------------------------------------------------------------------------------------
-.PHONY: eshop-create eshop-remove backoffice-create backoffice-remove
+.PHONY: eshop-set eshop-create eshop-remove admin-set admin-create admin-remove
+
+eshop-set:
+	$(MAKE) webshop-db-env-set webshop-api-env-set webshop-env-set;
 
 eshop-create:
-	$(MAKE) webshop-env-set webshop-db-env-set webshop-api-env-set;
-	$(MAKE) webshop-create webshop-db-create webshop-api-create;
+	echo "eshop-create not available";
 
 eshop-remove:
-	$(MAKE) webshop-remove webshop-db-remove webshop-api-remove;
+	echo "eshop-remove not available";
+
+admin-set:
+	$(MAKE) bucket-env-set webadmin-db-env-set webadmin-api-env-set webadmin-env-set;
 
 admin-create:
-	$(MAKE) bucket-env-set webadmin-env-set webadmin-db-env-set webadmin-api-env-set;
+	$(MAKE) bucket-create webadmin-db-create;
 
 admin-remove:
-	$(MAKE) bucket-remove webadmin-remove webadmin-db-remove webadmin-api-remove;
+	$(MAKE) bucket-remove webadmin-db-remove webadmin-api-remove webadmin-remove;
 
 # -------------------------------------------------------------------------------------------------
 #  Repository
