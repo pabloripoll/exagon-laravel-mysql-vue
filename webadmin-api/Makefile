@@ -78,8 +78,8 @@ env-set: ## sets docker .env file
 	echo "COMPOSE_PROJECT_NAME=$(DOCKER_NAME)\
 	\nCOMPOSE_PROJECT_HOST=$(DOCKER_HOST)\
 	\nCOMPOSE_PROJECT_PORT=$(DOCKER_PORT)" > ./docker/.env; \
+	echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END}; \
     $(MAKE) env-laravel;
-	echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END};
 
 # -------------------------------------------------------------------------------------------------
 #  Container
