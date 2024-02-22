@@ -36,8 +36,12 @@ RUN apk add --no-cache \
   ${PHP_V}-xmlwriter \
   ${PHP_V}-zip \
   # Database
+  ${PHP_V}-pdo \
+  ${PHP_V}-pdo_sqlite \
   ${PHP_V}-sqlite3 \
+  ${PHP_V}-pdo_mysql \
   ${PHP_V}-mysqli \
+  ${PHP_V}-pdo_pgsql \
   ${PHP_V}-pgsql \
   ${PHP_V}-mongodb \
   ${PHP_V}-redis
@@ -49,7 +53,6 @@ COPY config/nginx.conf /etc/nginx/nginx.conf
 COPY config/conf.d /etc/nginx/conf.d/
 
 # Configure PHP-FPM
-#ENV PHP_INI_DIR /etc/${PHP_V}
 COPY config/fpm-pool.conf /etc/${PHP_V}/php-fpm.d/www.conf
 COPY config/php.ini /etc/${PHP_V}/conf.d/custom.ini
 
