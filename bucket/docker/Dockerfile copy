@@ -1,9 +1,21 @@
 ARG ALPINE_VERSION=3.19
+ARG PHP_VERSION=8.3
 
 FROM alpine:${ALPINE_VERSION}
-FROM php:8.3-fpm-alpine
+FROM php:${PHP_VERSION}-fpm-alpine
 
-# Setup document root
+# Setup project root
+ARG UID
+ARG GID
+
+ENV UID=${UID}
+ENV GID=${GID}
+
+#RUN addgroup -g ${GID} --system www-data
+RUN adduser -G www-data --system -D -s /bin/sh -u ${UID} devel
+
+RUN mkdir -p /var/www/html
+
 WORKDIR /var/www/html
 
 # Install packages and remove default server definition
@@ -42,6 +54,7 @@ RUN apk add --no-cache \
   ${PHP_V}-mongodb \
   ${PHP_V}-redis
 
+
 # Configure nginx - http
 COPY config/nginx.conf /etc/nginx/nginx.conf
 
@@ -49,7 +62,6 @@ COPY config/nginx.conf /etc/nginx/nginx.conf
 COPY config/conf.d /etc/nginx/conf.d/
 
 # Configure PHP-FPM
-#ENV PHP_INI_DIR /etc/${PHP_V}
 COPY config/fpm-pool.conf /etc/${PHP_V}/php-fpm.d/www.conf
 COPY config/php.ini /etc/${PHP_V}/conf.d/custom.ini
 
@@ -57,23 +69,27 @@ COPY config/php.ini /etc/${PHP_V}/conf.d/custom.ini
 COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Make sure files/folders needed by the processes are accessable when they run under the nobody user
-RUN chown -R nobody.nobody /var/www/html /run /var/lib/nginx /var/log/nginx
+RUN chown -R www-data.www-data /run /var/lib/nginx /var/log/nginx
+RUN chown -R devel.www-data /var/www/html
 
 # PHP Docker
 RUN docker-php-ext-install pdo pdo_mysql
 
 # PHP Composer
+#RUN wget https://getcomposer.org/installer -O composer-setup.php && \
+#  php83 composer-setup.php --quiet --install-dir=/usr/bin --filename=composer && \
+#  rm composer-setup.php
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
-# ERROR file_put_contents(./composer.lock): Failed to open stream: Permission denied
 
 # Create symlink for php
 RUN ln -s /usr/bin/${PHP_V} /usr/bin/php
 
 # Switch to use a non-root user from here on
-USER nobody
+#USER devel
 
 # Add application
-COPY --chown=nobody ../ /var/www/html/
+#COPY --chown=nobody ../ /var/www/html/
+COPY --chown=devel:www-data ../ /var/www/html/
 
 # Expose the port nginx is reachable on
 EXPOSE 80
