@@ -1,1 +1,1 @@
-blank
+{{ app()->version() }}
