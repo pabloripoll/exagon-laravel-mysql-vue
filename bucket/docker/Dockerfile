@@ -1,8 +1,7 @@
 ARG ALPINE_VERSION=3.19
-FROM alpine:${ALPINE_VERSION}
 
-LABEL Maintainer="Tim de Pater <code@trafex.nl>"
-LABEL Description="Lightweight container with Nginx 1.24 & PHP 8.3 based on Alpine Linux."
+FROM alpine:${ALPINE_VERSION}
+FROM php:8.3-fpm-alpine
 
 # Setup document root
 WORKDIR /var/www/html
@@ -41,11 +40,6 @@ RUN apk add --no-cache \
   php83-mongodb \
   php83-redis
 
-# PHP Composer
-RUN wget https://getcomposer.org/installer -O composer-setup.php && \
-  php83 composer-setup.php --quiet --install-dir=/usr/bin --filename=composer && \
-  rm composer-setup.php
-
 # Configure nginx - http
 COPY config/nginx.conf /etc/nginx/nginx.conf
 
@@ -62,6 +56,14 @@ COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
 # Make sure files/folders needed by the processes are accessable when they run under the nobody user
 RUN chown -R nobody.nobody /var/www/html /run /var/lib/nginx /var/log/nginx
+
+# PHP Docker
+RUN docker-php-ext-install pdo pdo_mysql
+
+# PHP Composer
+RUN wget https://getcomposer.org/installer -O composer-setup.php && \
+  php83 composer-setup.php --quiet --install-dir=/usr/bin --filename=composer && \
+  rm composer-setup.php
 
 # Create symlink for php
 RUN ln -s /usr/bin/php83 /usr/bin/php

@@ -1,6 +1,11 @@
 <?php
 
-//session_start();
+$config = false;
+if ($config) {
+    echo phpinfo();
+
+    exit;
+}
 
 $display_errors = true;
 if ($display_errors) {
@@ -9,24 +14,22 @@ if ($display_errors) {
 	error_reporting(E_ALL);
 }
 
-require_once dirname(__DIR__, 1).'/vendor/autoload.php';
+$host = "192.168.1.41:8815";
+$database = "webadmin";
+$username = "webadmin";
+$password = "SuP9r*S3cr3t";
 
-use App\Request;
-use App\Response;
+try {
+    // Create connection
+    $connection = mysqli_connect($host, $username, $password, $database);
 
-$request = new Request;
-$response = new Response;
+    // Check connection
+    /* if (! $connection) {
+        die("Connection failed: " . mysqli_connect_error());
+    } */
+    echo "Connected successfully";
 
-if ($request->method == 'get' && $request->route == '/router/test') {
-    echo '<pre>'; print_r($request); echo '</pre>';
-
-    exit;
+    mysqli_close($connection);
+} catch(Exception $e) {
+    echo "Connection failed: " . $e->getMessage() . ' / ' . $host;
 }
-
-if ($request->method == 'post') {
-    $response->json($request);
-
-    exit;
-}
-
-$response->json(['message' => 'no resource']);

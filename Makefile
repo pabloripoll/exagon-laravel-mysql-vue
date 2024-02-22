@@ -23,7 +23,10 @@ help: ## shows this Makefile help message
 # -------------------------------------------------------------------------------------------------
 #  System
 # -------------------------------------------------------------------------------------------------
-.PHONY: system-check
+.PHONY: hostname system-check
+
+hostname:
+	echo $(word 1,$(shell hostname -I))
 
 system-check: ## shows this project ports on local machine availability
 	echo ${C_BLU}"DOCKER requirements:"${C_END};
@@ -212,10 +215,10 @@ eshop-remove:
 	echo "none";
 
 admin-create:
-	$(MAKE) bucket-create webadm-create webadm-db-create webadm-api-create;
+	$(MAKE) bucket-env-set webadm-env-set webadm-db-env-set webadm-api-env-set;
 
 admin-remove:
-	$(MAKE) bucket-remove webadm-remove webadm-db-remove webadm-api-remove;
+	$(MAKE) webadm-db-remove webadm-api-remove;
 
 # -------------------------------------------------------------------------------------------------
 #  Repository

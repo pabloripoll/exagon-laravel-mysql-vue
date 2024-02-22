@@ -11,16 +11,16 @@ C_END='\033[0m'
 include ../../.env
 
 DOCKER_ABBR="WEBAPP_DB"
+DOCKER_HOST=$(HOSTNAME)
 DOCKER_PORT=$(WEBAPP_DB_PORT)
 DOCKER_NAME=$(PROJECT)$(WEBAPP_DB_PROJECT)$(PROJECT_CODE)
 
 CURRENT_DIR=$(patsubst %/,%,$(dir $(realpath $(firstword $(MAKEFILE_LIST)))))
 DIR_BASENAME=$(shell basename $(CURRENT_DIR))
 ROOT_DIR=$(CURRENT_DIR)
-CURRENT_USER=sudo
-DOCKER_COMPOSE?=$(CURRENT_USER) docker compose
+DOCKER_COMPOSE?=$(DOCKER_USER) docker compose
 DOCKER_COMPOSE_RUN=$(DOCKER_COMPOSE) run --rm
-DOCKER_EXEC_TOOLS_APP=$(CURRENT_USER) docker exec -it $(DOCKER_NAME) sh
+DOCKER_EXEC_TOOLS_APP=$(DOCKER_USER) docker exec -it $(DOCKER_NAME) sh
 
 help: ## shows this Makefile help message
 	echo 'usage: make [target]'
@@ -34,11 +34,11 @@ help: ## shows this Makefile help message
 .PHONY: fix-permission host-check
 
 fix-permission: ## sets project directory permission
-	$(CURRENT_USER) chown -R ${USER}: $(ROOT_DIR)/
+	$(DOCKER_USER) chown -R ${USER}: $(ROOT_DIR)/
 
 host-check: ## shows this project ports availability on local machine
 	echo "Checking configuration for "${C_YEL}"$(DOCKER_NAME)"${C_END}" container:";
-	if [ -z "$$($(CURRENT_USER) lsof -i :$(DOCKER_PORT))" ]; then \
+	if [ -z "$$($(DOCKER_USER) lsof -i :$(DOCKER_PORT))" ]; then \
 		echo ${C_BLU}"$(DOCKER_ABBR)"${C_END}" > port:"${C_GRN}"$(DOCKER_PORT) is free to use."${C_END}; \
     else \
 		echo ${C_BLU}"$(DOCKER_ABBR)"${C_END}" > port:"${C_RED}"$(DOCKER_PORT) is busy. Update ./.env file."${C_END}; \
@@ -59,9 +59,9 @@ env: ## checks if docker .env file exists
 	fi
 
 env-set: ## sets docker .env file
-	echo "PROJECT=$(DOCKER_NAME)\
-	\nPROJECT_PORT=$(DOCKER_PORT)\
-	\nDB_PASSWORD=$(DOCKER_PORT)" > ./docker/.env;
+	echo "COMPOSE_PROJECT_NAME=$(DOCKER_NAME)\
+	\nCOMPOSE_PROJECT_PORT=$(DOCKER_PORT)\
+	\nDB_PASSWORD=\"$(WEBAPP_DB_PASS)\"" > ./docker/.env;
 	echo ${C_BLU}"$(DOCKER_ABBR) DOCKER ENV"${C_END}" file "${C_GRN}"has been set."${C_END};
 
 # -------------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ ssh:
 	$(DOCKER_EXEC_TOOLS_APP)
 
 cli:
-	$(CURRENT_USER) docker exec -it $(DOCKER_NAME) redis-cli -a $(REDIS_DB_PASS)
+	$(DOCKER_USER) docker exec -it $(DOCKER_NAME) redis-cli -a $(REDIS_DB_PASS)
 
 build:
 	cd docker && $(DOCKER_COMPOSE) up --build --no-recreate -d
@@ -86,11 +86,11 @@ dev:
 
 up:
 	cd docker && $(DOCKER_COMPOSE) up -d
-	$(CURRENT_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)
+	$(DOCKER_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)
 	echo $(DOCKER_PORT)
 
 container-ip:
-	$(CURRENT_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)
+	$(DOCKER_USER) docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(DOCKER_NAME)
 	echo $(DOCKER_PORT)
 
 start:

@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  mariadb:
+    image: mariadb-15.1:alpine-3.19
+    pull_policy: never
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    container_name: ${PROJECT}
+    ports:
+      - "${PROJECT_PORT}:3306"
+    environment:
+      PUID: 1000
+      PGID: 1000
+      TZ: Etc/UTC
+      MARIADB_VERSION: 10.11.6
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    restart: unless-stopped
+
+networks:
+  network:
+    name: ${PROJECT_NETWORK}
+    external: true
