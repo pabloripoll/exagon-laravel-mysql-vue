@@ -219,23 +219,14 @@ eshop-remove:
 admin-set:
 	$(MAKE) bucket-env-set webadmin-db-env-set webadmin-api-env-set webadmin-env-set;
 
-<<<<<<< Updated upstream
 admin-create:
 	$(MAKE) bucket-create webadmin-db-create webadmin-api-create webadmin-create;
-=======
-admin-set:
-	$(MAKE) bucket-env-set webadmin-env-set webadmin-db-env-set webadmin-api-env-set;
->>>>>>> Stashed changes
 
 admin-create:
 	$(MAKE) bucket-create webadmin-db-create;
 
 admin-remove:
-<<<<<<< Updated upstream
 	$(MAKE) bucket-remove webadmin-db-remove webadmin-api-remove webadmin-remove;
-=======
-	$(MAKE) bucket-remove webadmin-db-remove;
->>>>>>> Stashed changes
 
 # -------------------------------------------------------------------------------------------------
 #  Repository
