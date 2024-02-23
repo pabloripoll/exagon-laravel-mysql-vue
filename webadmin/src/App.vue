@@ -2,6 +2,7 @@
 import Header from './views/common/Header.vue'
 import Sidebar from './views/common/Sidebar.vue'
 import Footer from './views/common/Footer.vue'
+
 </script>
 
 <template>
@@ -38,7 +39,7 @@ export default {
         window.addEventListener('hashchange', () => {
 		    this.currentPath = window.location.hash
 		})
-        console.log('app')
+
         // theme scripts
         let themejs_jquery = document.createElement('script')
         let themejs_jqueryui = document.createElement('script')

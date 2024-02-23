@@ -15,49 +15,62 @@
                             <i class="nav-icon fas fa-chart-line"></i>
                             <p>Dashboard</p>
                         </router-link>
+                    </li>
+                    <li class="nav-item">
                         <router-link to="/eshop/sales" class="nav-link">
                             <i class="nav-icon fas fa-shopping-cart"></i>
                             <p>Sales</p>
                         </router-link>
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/eshop/customers" class="nav-link">
+                            <i class="nav-icon fas fa-user-tag"></i>
+                            <p>Customers</p>
+                        </router-link>
+                    </li>
+                    <li class="nav-item">
                         <router-link to="/eshop/products" class="nav-link">
                             <i class="nav-icon fas fa-gift"></i>
                             <p>Products</p>
                         </router-link>
                     </li>
 
-                    <li class="nav-header"><i class="nav-icon fas fa-cubes"></i> &nbsp; CATALOGUE</li>
+                    <li class="nav-header"><i class="nav-icon fas fa-warehouse"></i> &nbsp; WAREHOUSE</li>
                     <li class="nav-item">
-                        <router-link to="/catalogue/products" class="nav-link">
-                            <i class="nav-icon fas fa-cube"></i>
+                        <router-link to="/warehouse/products" class="nav-link">
+                            <i class="nav-icon fas fa-cubes"></i>
                             <p>Products</p>
                         </router-link>
-                        <router-link to="/catalogue/categories" class="nav-link">
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/warehouse/categories" class="nav-link">
                             <i class="nav-icon fas fa-sitemap"></i>
                             <p>Categories</p>
                         </router-link>
-                        <router-link to="/catalogue/brands" class="nav-link">
+                    </li>
+                    <li class="nav-item">
+                        <router-link to="/warehouse/brands" class="nav-link">
                             <i class="nav-icon fas fa-copyright"></i>
                             <p>Brands</p>
                         </router-link>
                     </li>
-                    <!-- <li class="nav-header"><i class="nav-icon fas fa-store"></i> E-SHOP</li>
+
+                    <li class="nav-header"><i class="nav-icon fas fa-broadcast-tower"></i> &nbsp; MEMBERS</li>
                     <li class="nav-item">
-                        <router-link to="/eshop/dashboard" class="nav-link">
-                            <i class="nav-icon fas fa-chart-line"></i>
-                            <p>
-                                Dashboard
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
+                        <router-link to="/member/feeds" class="nav-link">
+                            <i class="nav-icon fas fas fa-users-cog"></i>
+                            <p>Feeds</p>
                         </router-link>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <router-link to="/eshop/dashboard" class="nav-link">
-                                    <i class="nav-icon fas fa-window-minimize"></i>
-                                    <p>statistics</p>
-                                </router-link>
-                            </li>
-                        </ul>
-                    </li> -->
+                    </li>
+
+                    <li class="nav-header"><i class="nav-icon fas fa-house-user"></i> &nbsp; ACCOUNT</li>
+                    <li class="nav-item">
+                        <router-link to="/account/setting" class="nav-link">
+                            <i class="nav-icon fas fa-cog"></i>
+                            <p>Settings</p>
+                        </router-link>
+                    </li>
+
                 </ul>
             </nav>
         </div>

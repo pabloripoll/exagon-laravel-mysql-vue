@@ -1,21 +1,31 @@
 import {createRouter, createWebHistory} from 'vue-router'
 
 const routes = [
-    { path: '/', component: () => import('./views/EshopDashboard.vue') },
+    { path: '/', redirect: 'eshop/dashboard' },
+    { path: '/login', name: 'Login', component: () => import('./views/Login.vue') },
     { path: '/eshop/dashboard', component: () => import('./views/EshopDashboard.vue') },
     { path: '/eshop/sales', component: () => import('./views/EshopSales.vue') },
-    /* { path: '/product.html', component: () => import('./views/Product.vue') },
-    { path: '/cart.html', component: () => import('./views/Cart.vue') },
-    { path: '/delivery.html', component: () => import('./views/Delivery.vue') },
-    { path: '/payment.html', component: () => import('./views/Payment.vue') },
-    { path: '/completed.html', component: () => import('./views/Completed.vue') },
-    { path: '/account.html', component: () => import('./views/Account.vue') },
-    { path: '/contact.html', component: () => import('./views/Contact.vue') } */
+    { path: '/eshop/customers', component: () => import('./views/EshopCustomers.vue') },
+    { path: '/eshop/products', component: () => import('./views/EshopProducts.vue') },
+    { path: '/eshop/:notifications*', component: () => import('./views/EshopNotifications.vue') },
+    { path: '/warehouse/products', component: () => import('./views/WarehouseProducts.vue') },
+    { path: '/warehouse/categories', component: () => import('./views/WarehouseProducts.vue') },
+    { path: '/warehouse/brands', component: () => import('./views/WarehouseProducts.vue') },
+    { path: '/member/feeds', component: () => import('./views/MemberFeeds.vue') },
+    { path: '/account/setting', component: () => import('./views/AccountSetting.vue') },
+    { path: '/exit', component: () => import('./views/AccountSetting.vue') },
 ]
 
+//const authStore = defineStore(pinia)
+
 const router = createRouter({
-    history: createWebHistory(),
+    history: createWebHistory(import.meta.env.BASE_URL),
     routes
+})
+
+router.beforeEach((to, from, next) => {
+    if (to.name !== 'Login' && !isAuthenticated) next({ name: 'Login' })
+    else next()
 })
 
 export default router
