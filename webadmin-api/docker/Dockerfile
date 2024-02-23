@@ -1,8 +1,11 @@
 ARG ALPINE_VERSION=3.19
+ARG PHP_VERSION=8.3
+ARG PHP_ALPINE=83
 
 FROM alpine:${ALPINE_VERSION}
-FROM php:8.3-fpm-alpine
+FROM php:${PHP_VERSION}-fpm-alpine
 
+<<<<<<< Updated upstream
 # Setup unique user and group - needs bash
 RUN apk add --no-cache bash
 
@@ -15,6 +18,24 @@ RUN addgroup -g ${GID} --system docker
 RUN adduser -G docker --system -D -s /bin/sh -u ${UID} docker
 
 # Create project root
+=======
+# User & Group
+ARG UID
+ARG GID
+ARG UNAME=${UNAME='devel'}
+ARG GNAME=${GNAME='www-data'}
+
+ENV UID=${UID}
+ENV GID=${GID}
+
+RUN usermod  --uid $UID $UNAME
+RUN groupmod --gid $GID $GNAME
+
+#RUN addgroup -g ${GID} --system ${$GNAME} # already exists
+RUN adduser -G ${$GNAME} --system -D -s /bin/sh -u ${UID} ${UNAME}
+
+# Project
+>>>>>>> Stashed changes
 RUN mkdir -p /var/www/html
 
 WORKDIR /var/www/html
@@ -61,12 +82,22 @@ RUN apk add --no-cache \
   ${PHP_V}-mongodb \
   ${PHP_V}-redis
 
+<<<<<<< Updated upstream
+=======
+#
+# NGINX configuration
+#
+
+RUN sed -i "s/user  nginx/user www-data/g" /etc/nginx/nginx.conf
+
+>>>>>>> Stashed changes
 # Configure nginx - http
 COPY config/nginx.conf /etc/nginx/nginx.conf
 
 # Configure nginx - default server
 COPY config/conf.d /etc/nginx/conf.d/
 
+<<<<<<< Updated upstream
 # Configure PHP-FPM
 COPY config/fpm-pool.conf /etc/${PHP_V}/php-fpm.d/www.conf
 COPY config/php.ini /etc/${PHP_V}/conf.d/custom.ini
@@ -92,8 +123,38 @@ USER docker
 
 # Add application
 COPY --chown=docker.docker ../ /var/www/html/
+=======
+# Configure supervisord
+COPY config/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Expose the port nginx is reachable on
+#
+# PHP configuration
+#
+
+# PHP Composer
+COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
+
+# PHP extensions for Docker from image
+RUN docker-php-ext-install pdo pdo_mysql
+
+# PHP Redis
+#RUN mkdir -p /usr/src/php/ext/redis \
+#    && curl -L https://github.com/phpredis/phpredis/archive/5.3.4.tar.gz | tar xvz -C /usr/src/php/ext/redis --strip 1 \
+#    && echo 'redis' >> /usr/src/php-available-exts \
+#    && docker-php-ext-install redis
+
+USER ${UNAME}
+
+# Configure PHP-FPM
+ENV PHP_INI_DIR /etc/php83
+COPY config/fpm-pool.conf ${PHP_INI_DIR}/php-fpm.d/www.conf
+COPY config/php.ini ${PHP_INI_DIR}/conf.d/custom.ini
+
+# Add application
+COPY ../ /var/www/html/
+>>>>>>> Stashed changes
+
+# Expose the port Nginx is reachable on
 EXPOSE 80
 
 # Let supervisord start nginx & php-fpm

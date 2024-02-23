@@ -1,5 +1,15 @@
 <?php
 
+<<<<<<< Updated upstream
+=======
+$config = true;
+if ($config) {
+    echo phpinfo();
+
+    exit;
+}
+
+>>>>>>> Stashed changes
 $display_errors = true;
 if ($display_errors) {
 	ini_set('display_errors', 1);
@@ -9,6 +19,7 @@ if ($display_errors) {
 
 require_once dirname(__DIR__, 1).'/vendor/autoload.php';
 
+<<<<<<< Updated upstream
 use App\Request;
 use App\Response;
 
@@ -28,3 +39,16 @@ if ($request->method == 'post') {
 }
 
 $response->json(['message' => 'no resource']);
+=======
+/* try {
+    $connection = new PDO("mysql:host=$host;dbname=$database", $username, $password);
+
+    // set the PDO error mode to exception
+    $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+    echo "Connected successfully";
+
+} catch(PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+} */
+>>>>>>> Stashed changes
