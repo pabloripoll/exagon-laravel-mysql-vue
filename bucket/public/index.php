@@ -9,22 +9,14 @@ if ($debug) {
 
 require_once dirname(__DIR__, 1).'/vendor/autoload.php';
 
-use App\Request;
-use App\Response;
+// Define router
+$root = explode('/', $_SERVER['REQUEST_URI'])[1] ?? '';
 
-$request = new Request;
-$response = new Response;
+if ($root == 'api') {
+    $_SERVER['REQUEST_URI'] = substr($_SERVER['REQUEST_URI'], 4);
+    $_SERVER['REQUEST_URI'] = empty($_SERVER['REQUEST_URI']) ? '/' : $_SERVER['REQUEST_URI'];
 
-/* if ($request->method == 'get' && $request->route == '/router/test') {
-    echo '<pre>'; print_r($request); echo '</pre>';
-
-    exit;
+    include_once dirname(__DIR__, 1).'/routes/api.php';
 }
 
-if ($request->method == 'post') {
-    $response->json($request);
-
-    exit;
-} */
-
-$response->json(['message' => 'no resource']);
+include_once dirname(__DIR__, 1).'/routes/web.php';

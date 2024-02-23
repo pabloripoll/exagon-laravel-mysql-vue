@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Http;
 
 class Request
 {
@@ -17,9 +17,14 @@ class Request
         $this->route_parsed = $this->routeParsed();
     }
 
-    private function server()
+    protected function server()
     {
         return $_SERVER;
+    }
+
+    protected function input()
+    {
+        return file_get_contents('php://input');
     }
 
     protected function host($use_forwarded_host = false): object
