@@ -2,6 +2,8 @@ import { createApp } from 'vue'
 
 import { createPinia } from 'pinia'
 
+import store from '@/stores'
+
 // Google Font: Source Sans Pro *remains to download fonts source
 import '../src/assets/theme/adminlte/fonts/google-fonts.css'
 // Font Awesome
@@ -27,21 +29,24 @@ import '../src/assets/theme/adminlte/plugins/pace-progress/themes/black/pace-the
 // Custom
 import '../src/assets/theme/custom/custom.css'
 
-// App Core
-
+// App Dependencies
 import App from './App.vue'
 
 import Axios from './plugin/axios'
 
-import router from './router'
+import Router from './router'
 
 // Create App
-const app = createApp(App)
+const Pinia = createPinia()
 
-app.use(createPinia())
+const app = createApp(App)
 
 app.config.globalProperties.axios = Axios
 
-app.use(router)
+app.use(Pinia)
+
+app.use(store)
+
+app.use(Router)
 
 app.mount('#app')

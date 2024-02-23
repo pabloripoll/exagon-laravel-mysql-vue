@@ -1,5 +1,7 @@
 import {createRouter, createWebHistory} from 'vue-router'
 
+import { useUserStore } from '@/stores/user'
+
 const routes = [
     { path: '/', redirect: 'eshop/dashboard' },
     { path: '/login', name: 'Login', component: () => import('./views/Login.vue') },
@@ -23,9 +25,27 @@ const router = createRouter({
     routes
 })
 
-router.beforeEach((to, from, next) => {
-    if (to.name !== 'Login' && !isAuthenticated) next({ name: 'Login' })
-    else next()
+router.beforeEach(async (to, from, next) => {
+    const Auth = auth
+
+    await Auth.initStore() // Make sure the user state is initialized.
+
+    // Now, you can access the user's role and perform authorization checks.
+    const userRole = Auth.user.role
+
+    // You can implement your authorization logic here.
+    // For example, check if the userRole has access to the route.
+    // You can also handle cases like redirecting to a login page if not authenticated.
+
+    // For simplicity, let's assume all users can access all routes.
+    // Replace this with your actual authorization logic.
+    if (userRole !== null) {
+        next()// Allow navigation.
+    } else {
+        // Redirect to a login page or show an unauthorized message.
+        // Modify this according to your application's requirements.
+        next('/login') // Redirect to a login page if the user's role is not defined.
+    }
 })
 
 export default router
