@@ -251,9 +251,7 @@ repo-user: ## set local git repository user
 	fi
 
 repo-flush: ## clears local git repository cache
-	git rm -rf --cached .;
-	git add .;
-	git commit -m "fix: cache cleared for untracked files";
+	git rm -rf --cached .; git add .; git commit -m "fix: cache cleared for untracked files";
 
 # Default branch and comment variables with most common values
 branch ?= "$(shell git branch | sed 's/^.\{2\}//')"
